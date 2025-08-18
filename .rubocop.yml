@@ -1,0 +1,100 @@
+# Common configuration.
+
+AllCops:
+  RubyInterpreters:
+    - ruby
+    - macruby
+    - rake
+    - jruby
+    - rbx
+  # Include common Ruby source files.
+  Include:
+    - '**/*.rb'
+    - '**/*.arb'
+    - '**/*.axlsx'
+    - '**/*.builder'
+    - '**/*.fcgi'
+    - '**/*.gemfile'
+    - '**/*.gemspec'
+    - '**/*.god'
+    - '**/*.jb'
+    - '**/*.jbuilder'
+    - '**/*.mspec'
+    - '**/*.opal'
+    - '**/*.pluginspec'
+    - '**/*.podspec'
+    - '**/*.rabl'
+    - '**/*.rake'
+    - '**/*.rbuild'
+    - '**/*.rbw'
+    - '**/*.rbx'
+    - '**/*.ru'
+    - '**/*.ruby'
+    - '**/*.spec'
+    - '**/*.thor'
+    - '**/*.watchr'
+    - '**/.irbrc'
+    - '**/.pryrc'
+    - '**/.simplecov'
+    - '**/buildfile'
+    - '**/Appraisals'
+    - '**/Berksfile'
+    - '**/Brewfile'
+    - '**/Buildfile'
+    - '**/Capfile'
+    - '**/Cheffile'
+    - '**/Dangerfile'
+    - '**/Deliverfile'
+    - '**/Fastfile'
+    - '**/*Fastfile'
+    - '**/Gemfile'
+    - '**/Guardfile'
+    - '**/Jarfile'
+    - '**/Mavenfile'
+    - '**/Podfile'
+    - '**/Puppetfile'
+    - '**/Rakefile'
+    - '**/rakefile'
+    - '**/Snapfile'
+    - '**/Steepfile'
+    - '**/Thorfile'
+    - '**/Vagabondfile'
+    - '**/Vagrantfile'
+  Exclude:
+    - 'node_modules/**/*'
+    - 'tmp/**/*'
+    - 'vendor/**/*'
+    - '.git/**/*'
+    - 'bin/**'
+    - 'db/schema.rb'
+    - 'lib/mail_watchers/*'
+    - 'spec/support/test_watchers/**'
+    - 'lib/tasks/auto_annotate_models.rake'
+  # Default formatter will be used if no `-f/--format` option is given.
+  DefaultFormatter: progress
+  TargetRubyVersion: 3.3.1 # CHANGE_RUBY_VERSION_HERE
+
+
+Style/Documentation:
+  Description: 'Document classes and non-namespace modules.'
+  Enabled: false
+  VersionAdded: '0.9'
+  AllowedConstants: []
+
+Metrics/BlockLength:
+  Enabled: true
+  AllowedMethods:
+    - context
+    - describe
+  Exclude:
+    - 'config/environments/development.rb'
+
+Metrics/MethodLength:
+  Enabled: true
+  CountAsOne:
+    - array
+    - heredoc
+    - method_call
+    - hash
+  Exclude:
+    - 'db/migrate/*'

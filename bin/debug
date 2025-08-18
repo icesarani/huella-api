@@ -1,0 +1,5 @@
+#!/usr/bin/bash
+
+# Wrap the arguments sent to `bin/debug` with `rdbg` to enable debugging
+# 
+bundle exec rdbg -O -n -c -- "${@:1}"

@@ -1,0 +1,20 @@
+# PostgreSQL db from container
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+  username: <%= ENV['DATABASE_USERNAME'] %>
+  password: <%= ENV['DATABASE_PASSWORD'] %>
+  host: <%= ENV['DATABASE_HOST'] %>
+
+development:
+  <<: *default
+  database: template_app_development
+
+test:
+  <<: *default
+  database: template_app_test
+
+production:
+  <<: *default
+  database: template_app_production
