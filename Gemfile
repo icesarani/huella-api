@@ -3,7 +3,7 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem 'rails', '~> 7.1.3', '>= 7.1.3.2'
+gem 'rails', '8.0.0'
 
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem 'sprockets-rails'
@@ -24,7 +24,7 @@ gem 'pg'
 # gem "stimulus-rails"
 
 # Tailwind CSS is a utility-first CSS framework [https://github.com/rails/tailwindcss-rails]
-gem 'tailwindcss-rails'
+# gem 'tailwindcss-rails'
 
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem 'jbuilder'
@@ -64,6 +64,9 @@ gem 'tzinfo-data', platforms: %i[mswin mswin64 mingw x64_mingw jruby]
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', require: false
 
+# Use OpenAPI documentation as an API contract
+gem 'openapi_contracts'
+
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing"
 
@@ -79,6 +82,9 @@ group :development, :test do
 
   # Creates objects as test data for testing with factory classes
   gem 'factory_bot'
+
+  # Add comments above your Rails actions
+  gem 'chusaku', require: false
 end
 
 group :development do

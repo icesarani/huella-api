@@ -72,7 +72,7 @@ AllCops:
     - 'lib/tasks/auto_annotate_models.rake'
   # Default formatter will be used if no `-f/--format` option is given.
   DefaultFormatter: progress
-  TargetRubyVersion: 3.3.1 # CHANGE_RUBY_VERSION_HERE
+  TargetRubyVersion: 3.3.9 # CHANGE_RUBY_VERSION_HERE
 
 
 Style/Documentation:

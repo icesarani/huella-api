@@ -1,0 +1,102 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  rubocop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3.9' # CHANGE_RUBY_VERSION_HERE
+          bundler-cache: true
+      - name: Run Rubocop
+        uses: reviewdog/action-rubocop@v2.16.0
+        with:
+          fail_on_error: true
+          filter_mode: nofilter
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
+          rubocop_version: gemfile
+          skip_install: true
+          use_bundler: true
+  chusaku:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3.9' # CHANGE_RUBY_VERSION_HERE
+          bundler-cache: true
+      - name: Run Chusaku
+        run: bundle exec chusaku --exit-with-error-on-annotation
+  brakeman:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3.6' # CHANGE_RUBY_VERSION_HERE
+          bundler-cache: true
+      - name: Run Brakeman
+        uses: reviewdog/action-brakeman@v2.15.0
+        with:
+          brakeman_version: gemfile
+          brakeman_flags: --run-all-checks
+          fail_on_error: true
+          filter_mode: nofilter
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
+  rspec:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: postgres
+      DATABASE_HOST: localhost
+      RAILS_ENV: test
+    services:
+      db:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3.9' # CHANGE_RUBY_VERSION_HERE
+          bundler-cache: true
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          while ! pg_isready -h localhost -p 5432 -U postgres; do
+            sleep 1
+          done
+      - name: Create and migrate DB
+        run: |
+          bundle exec rails db:create
+          bundle exec rails db:migrate
+      - name: Run RSpec
+        run: |
+          bundle exec rspec

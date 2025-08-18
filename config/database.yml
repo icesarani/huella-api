@@ -9,12 +9,12 @@ default: &default
 
 development:
   <<: *default
-  database: template_app_development
+  database: huella_api_development
 
 test:
   <<: *default
-  database: template_app_test
+  database: huella_api_test
 
 production:
   <<: *default
-  database: template_app_production
+  database: huella_api_production
