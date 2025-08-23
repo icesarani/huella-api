@@ -81,10 +81,16 @@ group :development, :test do
   gem 'faker'
 
   # Creates objects as test data for testing with factory classes
-  gem 'factory_bot'
+  gem 'factory_bot_rails'
 
   # Add comments above your Rails actions
   gem 'chusaku', require: false
+
+  # Add matchers to RSpec valitadions
+  gem 'shoulda-matchers', '~> 5.0'
+
+  # This gem provides a simple way to validate the coverage of your tests.
+  gem 'simplecov'
 end
 
 group :development do

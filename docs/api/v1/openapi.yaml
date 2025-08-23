@@ -1,0 +1,133 @@
+openapi: 3.1.0
+info:
+  title: Huella Rural API
+  description: Huella Rural API
+  version: 0.0.1
+  contact:
+    name: Huella Rural
+    email: icesarani@uade.edu.ar
+servers:
+  - url: http://localhost:3000
+tags:
+  - name: Auth
+    description: Endpoints for user authentication.
+paths:
+  /api/v1/sessions:
+    post:
+      summary: Creates a new session.
+      description: Creates a new session for the user.
+      operationId: createSession
+      tags: [Auth]
+      requestBody:
+        description: Viewer credentials for authentication.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      format: email
+                      description: The user's email address.
+                      example: jdoe@gmail.com
+                    password:
+                      type: string
+                      format: password
+                      description: The user's password.
+                      example: securePassword123
+                  required:
+                    - email
+                    - password
+              required:
+                - user
+      responses:
+        '200':
+          description: Successfully authenticated. The session token is sent as a cookie.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Invalid email or password.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Deletes the current session.
+      description: Deletes the current session for the user.
+      operationId: deleteSession
+      tags: [Auth]
+      responses:
+        '204':
+          description: Successfully deleted the session.
+  /api/v1/registrations:
+    post:
+      summary: Creates a new user registration.
+      description: Creates a new user account and returns the user information.
+      operationId: createRegistration
+      tags: [Auth]
+      requestBody:
+        description: User registration data.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      format: email
+                      description: The user's email address.
+                      example: jdoe@gmail.com
+                    password:
+                      type: string
+                      format: password
+                      description: The user's password.
+                      example: securePassword123
+                  required:
+                    - email
+                    - password
+              required:
+                - user
+      responses:
+        '200':
+          description: Successfully created user account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '422':
+          description: Validation errors.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The unique identifier of the user.
+          example: 1
+        email:
+          type: string
+          format: email
+          description: The user's email address.
+          example: "icesarani@uade.edu.ar"
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message.
+          example: "Invalid email or password"

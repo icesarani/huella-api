@@ -89,6 +89,10 @@ Metrics/BlockLength:
   Exclude:
     - 'config/environments/development.rb'
 
+Style/GlobalVars:
+  Enabled: false
+  Description: 'Do not introduce global variables.'
+
 Metrics/MethodLength:
   Enabled: true
   CountAsOne:

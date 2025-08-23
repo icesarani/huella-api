@@ -39,3 +39,6 @@ Gemfile.lock
 
 # Ignore ruby gems installed by bundler when running locally
 vendor/ruby
+
+# Ignore simplecov files
+coverage/*

@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+require 'simplecov'
+SimpleCov.start 'rails' do
+  add_filter '/vendor/'
+
+  minimum_coverage 85
+end
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
@@ -31,7 +38,22 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
+
+# Load helpers
+#
+Dir[Rails.root.join('spec/support/helpers/**/*.rb')].sort.each { |file| require file }
+
+# Generate the OpenAPI documentation
+#
+$api_docs = OpenapiContracts::Doc.parse(Rails.root.join('docs/api/v1'))
+
 RSpec.configure do |config|
+  config.before(:each, type: :request) { host! 'localhost' }
+
+  config.include FactoryBot::Syntax::Methods
+  config.include Devise::Test::IntegrationHelpers, type: :request
+  config.include RequestSpecHelpers, type: :request
+
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [
     Rails.root.join('spec/fixtures')
@@ -64,4 +86,11 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+end
+
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
+  end
 end

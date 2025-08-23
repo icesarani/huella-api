@@ -1,0 +1,19 @@
+
+es:
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            email:
+              blank: "no puede estar en blanco"
+              invalid: "no es válido"
+              taken: 'ya esta en uso'
+            password:
+              blank: "no puede estar en blanco"
+              too_short: "es demasiado corto (mínimo 6 caracteres)"
+              confirmation: "no coincide con la confirmación"
+            name:
+              blank: "no puede estar en blanco"
+              too_short: "es demasiado corto (mínimo 2 caracteres)"
+              too_long: "es demasiado largo (máximo 100 caracteres)"

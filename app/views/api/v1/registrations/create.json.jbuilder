@@ -1,0 +1,3 @@
+# frozen_string_literal: true
+
+json.partial! partial: 'api/v1/users/user', user: resource
