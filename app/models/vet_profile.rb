@@ -25,9 +25,18 @@
 class VetProfile < ApplicationRecord
   belongs_to :user, inverse_of: :vet_profile, optional: false
   belongs_to :blockchain_wallet, optional: false, inverse_of: :vet_profile
+  has_many :vet_service_areas, dependent: :destroy
+  has_many :localities, through: :vet_service_areas
 
   validates :first_name, :last_name, :identity_card, :license_number, presence: true
-
   validates :identity_card, uniqueness: true
   validates :license_number, uniqueness: true
+
+  def provinces
+    Province.joins(:localities).merge(localities).distinct
+  end
+
+  def full_name
+    "#{first_name} #{last_name}"
+  end
 end

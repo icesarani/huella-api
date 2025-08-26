@@ -9,7 +9,24 @@ es:
         invalid: "no es válido"
         too_short: "es demasiado corto (mínimo %{count} caracteres)"
         too_long: "es demasiado largo (máximo %{count} caracteres)"
+        wrong_length: "no tiene la longitud correcta (%{count} caracteres)"
+        inclusion: "no está incluido en la lista"
       models:
+        vet_service_area:
+          attributes:
+            vet_profile_id:
+              taken: "ya tiene esta localidad asignada"
+        province:
+          attributes:
+            iso_code:
+              wrong_length: "debe tener exactamente 4 caracteres (formato AR-X)"
+              invalid: "debe tener el formato AR-X donde X es una letra"
+        locality:
+          attributes:
+            indec_code:
+              wrong_length: "debe tener exactamente 11 dígitos"
+            category:
+              inclusion: "debe ser Ciudad, Localidad simple (LS), Localidad compuesta (LC), Paraje (P) u Otros"
         user:
           attributes:
             email:

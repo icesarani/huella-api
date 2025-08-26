@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_26_050000) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_26_050738) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -21,6 +21,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_26_050000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["address"], name: "index_blockchain_wallets_on_address", unique: true
+  end
+
+  create_table "localities", force: :cascade do |t|
+    t.string "indec_code"
+    t.string "name"
+    t.string "category"
+    t.bigint "province_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["indec_code"], name: "index_localities_on_indec_code", unique: true
+    t.index ["province_id"], name: "index_localities_on_province_id"
   end
 
   create_table "producer_profiles", force: :cascade do |t|
@@ -37,6 +48,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_26_050000) do
     t.index ["identity_card"], name: "index_producer_profiles_on_identity_card", unique: true
     t.index ["renspa_number"], name: "index_producer_profiles_on_renspa_number", unique: true
     t.index ["user_id"], name: "index_producer_profiles_on_user_id", unique: true
+  end
+
+  create_table "provinces", force: :cascade do |t|
+    t.string "indec_code"
+    t.string "name"
+    t.string "iso_code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["indec_code"], name: "index_provinces_on_indec_code", unique: true
   end
 
   create_table "users", force: :cascade do |t|
@@ -66,8 +86,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_26_050000) do
     t.index ["user_id"], name: "index_vet_profiles_on_user_id", unique: true
   end
 
+  create_table "vet_service_areas", force: :cascade do |t|
+    t.bigint "vet_profile_id", null: false
+    t.bigint "locality_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["locality_id"], name: "index_vet_service_areas_on_locality_id"
+    t.index ["vet_profile_id"], name: "index_vet_service_areas_on_vet_profile_id"
+  end
+
+  add_foreign_key "localities", "provinces"
   add_foreign_key "producer_profiles", "blockchain_wallets"
   add_foreign_key "producer_profiles", "users"
   add_foreign_key "vet_profiles", "blockchain_wallets"
   add_foreign_key "vet_profiles", "users"
+  add_foreign_key "vet_service_areas", "localities"
+  add_foreign_key "vet_service_areas", "vet_profiles"
 end
