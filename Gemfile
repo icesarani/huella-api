@@ -64,6 +64,9 @@ gem 'tzinfo-data', platforms: %i[mswin mswin64 mingw x64_mingw jruby]
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', require: false
 
+# Loads environment variables from .env file
+gem 'dotenv-rails'
+
 # Use OpenAPI documentation as an API contract
 gem 'openapi_contracts'
 

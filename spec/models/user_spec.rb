@@ -73,4 +73,33 @@ RSpec.describe User, type: :model do
       expect(duplicate_user.errors[:email]).to include(I18n.t('activerecord.errors.models.user.attributes.email.taken'))
     end
   end
+
+  describe 'associations' do
+    it 'has one producer profile' do
+      expect(user).to have_one(:producer_profile)
+    end
+
+    it 'has one vet profile' do
+      expect(user).to have_one(:vet_profile)
+    end
+  end
+
+  describe '#profile' do
+    context 'when user has a producer profile' do
+      it 'returns the producer profile' do
+        user = create(:user)
+        producer_profile = create(:producer_profile, user: user)
+
+        expect(user.profile).to eq(producer_profile)
+      end
+    end
+
+    context 'when user has no profile' do
+      it 'returns nil' do
+        user = create(:user)
+
+        expect(user.profile).to be_nil
+      end
+    end
+  end
 end

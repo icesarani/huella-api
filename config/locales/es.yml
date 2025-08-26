@@ -2,6 +2,13 @@
 es:
   activerecord:
     errors:
+      messages:
+        record_invalid: "La validación falló: %{errors}"
+        taken: "ya está en uso"
+        blank: "no puede estar en blanco"
+        invalid: "no es válido"
+        too_short: "es demasiado corto (mínimo %{count} caracteres)"
+        too_long: "es demasiado largo (máximo %{count} caracteres)"
       models:
         user:
           attributes:

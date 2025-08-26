@@ -10,6 +10,7 @@
 # Ignore all environment files (except templates).
 /.env*
 !/.env*.erb
+!.env.sample
 
 # Ignore all logfiles and tempfiles.
 /log/*
@@ -42,3 +43,6 @@ vendor/ruby
 
 # Ignore simplecov files
 coverage/*
+
+/config/credentials/development.key
+/config/credentials/development.yml.enc
