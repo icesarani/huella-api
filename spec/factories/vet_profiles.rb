@@ -4,15 +4,15 @@
 #
 # Table name: vet_profiles
 #
-#  id                   :integer          not null, primary key
+#  id                   :bigint           not null, primary key
 #  first_name           :string           not null
-#  last_name            :string           not null
 #  identity_card        :string           not null
+#  last_name            :string           not null
 #  license_number       :string           not null
-#  user_id              :integer          not null
-#  blockchain_wallet_id :integer          not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
+#  blockchain_wallet_id :bigint           not null
+#  user_id              :bigint           not null
 #
 # Indexes
 #
@@ -20,6 +20,11 @@
 #  index_vet_profiles_on_identity_card         (identity_card) UNIQUE
 #  index_vet_profiles_on_license_number        (license_number) UNIQUE
 #  index_vet_profiles_on_user_id               (user_id) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (blockchain_wallet_id => blockchain_wallets.id)
+#  fk_rails_...  (user_id => users.id)
 #
 
 FactoryBot.define do

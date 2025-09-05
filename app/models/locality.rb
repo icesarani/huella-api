@@ -4,18 +4,22 @@
 #
 # Table name: localities
 #
-#  id          :integer          not null, primary key
+#  id          :bigint           not null, primary key
+#  category    :string
 #  indec_code  :string
 #  name        :string
-#  category    :string
-#  province_id :integer          not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
+#  province_id :bigint           not null
 #
 # Indexes
 #
 #  index_localities_on_indec_code   (indec_code) UNIQUE
 #  index_localities_on_province_id  (province_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (province_id => provinces.id)
 #
 
 class Locality < ApplicationRecord

@@ -30,7 +30,7 @@ gem 'pg'
 gem 'jbuilder'
 
 # Write annotations in models, fixture and factory files on migrations
-gem 'annotate'
+gem 'annotaterb'
 
 # Adds authentication
 gem 'devise'

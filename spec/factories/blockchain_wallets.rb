@@ -4,7 +4,7 @@
 #
 # Table name: blockchain_wallets
 #
-#  id              :integer          not null, primary key
+#  id              :bigint           not null, primary key
 #  address         :string
 #  mnemonic_phrase :string
 #  private_key     :string

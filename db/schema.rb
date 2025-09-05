@@ -10,9 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_26_050738) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_05_001320) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  # Custom types defined in this database.
+  # Note that some types may not work with other database engines. Be careful if changing database.
+  create_enum "certification_status", ["created", "assigned", "executed", "canceled", "rejected"]
 
   create_table "blockchain_wallets", force: :cascade do |t|
     t.string "address"
@@ -21,6 +25,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_26_050738) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["address"], name: "index_blockchain_wallets_on_address", unique: true
+  end
+
+  create_table "certification_requests", force: :cascade do |t|
+    t.enum "status", default: "created", null: false, enum_type: "certification_status"
+    t.string "address"
+    t.bigint "locality_id", null: false
+    t.bigint "vet_profile_id"
+    t.bigint "producer_profile_id", null: false
+    t.date "scheduled_date", null: false
+    t.integer "intended_animal_group"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["locality_id"], name: "index_certification_requests_on_locality_id"
+    t.index ["producer_profile_id"], name: "index_certification_requests_on_producer_profile_id"
+    t.index ["vet_profile_id"], name: "index_certification_requests_on_vet_profile_id"
   end
 
   create_table "localities", force: :cascade do |t|
@@ -95,6 +114,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_26_050738) do
     t.index ["vet_profile_id"], name: "index_vet_service_areas_on_vet_profile_id"
   end
 
+  add_foreign_key "certification_requests", "localities"
+  add_foreign_key "certification_requests", "producer_profiles"
+  add_foreign_key "certification_requests", "vet_profiles"
   add_foreign_key "localities", "provinces"
   add_foreign_key "producer_profiles", "blockchain_wallets"
   add_foreign_key "producer_profiles", "users"
