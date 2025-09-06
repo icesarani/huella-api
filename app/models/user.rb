@@ -27,7 +27,31 @@ class User < ApplicationRecord
   has_one :producer_profile, inverse_of: :user
   has_one :vet_profile, inverse_of: :user
 
+  accepts_nested_attributes_for :producer_profile
+  accepts_nested_attributes_for :vet_profile
+
+  validate :exactly_one_profile_on_create, on: :create
+
+  # Returns the profile associated with the user, which can be either a ProducerProfile  or a VetProfile.
+  #
+  # @return [ProducerProfile, VetProfile, nil] the user's profile, or nil if none exists
   def profile
     producer_profile || vet_profile
+  end
+
+  private
+
+  # Validates that the user has exactly one profile (either producer or vet) upon creation.
+  # This ensures that a user cannot be both a producer and a vet at the same time.
+  #
+  # @return [void]
+  # @raise [ActiveModel::ValidationError] if the user has zero or more than one profile
+  def exactly_one_profile_on_create
+    count = 0
+    count += 1 if producer_profile.present?
+    count += 1 if vet_profile.present?
+    return if count == 1
+
+    errors.add(:base, I18n.t('activerecord.errors.user.attributes.profiles.invalid'))
   end
 end

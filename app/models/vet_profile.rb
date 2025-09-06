@@ -29,13 +29,15 @@
 
 class VetProfile < ApplicationRecord
   belongs_to :user, inverse_of: :vet_profile, optional: false
-  belongs_to :blockchain_wallet, optional: false, inverse_of: :vet_profile
+  belongs_to :blockchain_wallet, required: true, inverse_of: :vet_profile
   has_many :vet_service_areas, dependent: :destroy
   has_many :localities, through: :vet_service_areas
 
   validates :first_name, :last_name, :identity_card, :license_number, presence: true
-  validates :identity_card, uniqueness: true
+  validates :identity_card, uniqueness: { case_sensitive: false }
   validates :license_number, uniqueness: true
+
+  before_validation :ensure_blockchain_wallet, on: :create
 
   def provinces
     Province.joins(:localities).merge(localities).distinct
@@ -43,5 +45,17 @@ class VetProfile < ApplicationRecord
 
   def full_name
     "#{first_name} #{last_name}"
+  end
+
+  private
+
+  def ensure_blockchain_wallet
+    return if blockchain_wallet.present?
+
+    self.blockchain_wallet = BlockchainWallet.create!(address: generate_wallet_address)
+  end
+
+  def generate_wallet_address
+    "0x#{SecureRandom.hex(20)}"
   end
 end

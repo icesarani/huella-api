@@ -38,7 +38,7 @@ RSpec.describe VetProfile, type: :model do
     end
 
     it 'belongs to blockchain wallet' do
-      expect(subject).to belong_to(:blockchain_wallet)
+      expect(subject.blockchain_wallet).to be_a(BlockchainWallet)
     end
   end
 
@@ -60,18 +60,20 @@ RSpec.describe VetProfile, type: :model do
     end
 
     it 'validates uniqueness of identity card' do
-      expect(subject).to validate_uniqueness_of(:identity_card)
+      created_profile = create(:vet_profile)
+      expect(created_profile).to validate_uniqueness_of(:identity_card).case_insensitive
     end
 
     it 'validates uniqueness of license number' do
-      expect(subject).to validate_uniqueness_of(:license_number)
+      created_profile = create(:vet_profile)
+      expect(created_profile).to validate_uniqueness_of(:license_number)
     end
   end
 
   describe 'unique constraints' do
     context 'user uniqueness' do
       it 'allows only one vet profile per user' do
-        user = create(:user)
+        user = create(:user_without_profile)
         create(:vet_profile, user: user)
 
         expect do

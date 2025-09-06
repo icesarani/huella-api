@@ -7,6 +7,7 @@ es:
         taken: "ya está en uso"
         blank: "no puede estar en blanco"
         invalid: "no es válido"
+        required: "es requerido"
         too_short: "es demasiado corto (mínimo %{count} caracteres)"
         too_long: "es demasiado largo (máximo %{count} caracteres)"
         wrong_length: "no tiene la longitud correcta (%{count} caracteres)"
@@ -29,6 +30,23 @@ es:
               inclusion: "debe ser Ciudad, Localidad simple (LS), Localidad compuesta (LC), Paraje (P) u Otros"
         user:
           attributes:
+            profiles:
+              invalid: "debe tener exactamente un perfil (productor o veterinario)"
+            profile_type:
+              blank: "debes especificar si eres productor o veterinario"
+              invalid: "tipo de perfil inválido. Debe ser 'producer' o 'vet'"
+            profile_attributes:
+              blank: "debes proporcionar los datos del perfil"
+            email:
+              taken: "ya está en uso"
+        producer_profile:
+          attributes:
+            user:
+              required: "es requerido"
+        vet_profile:
+          attributes:
+            user:
+              required: "es requerido"
             email:
               blank: "no puede estar en blanco"
               invalid: "no es válido"

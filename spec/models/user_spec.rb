@@ -58,14 +58,15 @@ RSpec.describe User, type: :model do
 
   describe 'factory' do
     it 'has a valid factory' do
-      expect(user).to be_valid
+      created_user = create(:user)
+      expect(created_user).to be_valid
     end
 
     it 'creates a user with valid attributes' do
-      user.save!
-      expect(user).to be_persisted
-      expect(user.email).to be_present
-      expect(user.encrypted_password).to be_present
+      created_user = create(:user)
+      expect(created_user).to be_persisted
+      expect(created_user.email).to be_present
+      expect(created_user.encrypted_password).to be_present
     end
   end
 
@@ -82,14 +83,8 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe 'email case sensitivity' do
-    let!(:existing_user) { create(:user, email: 'User@Example.Com') }
-
-    it 'prevents duplicate emails with different cases' do
-      duplicate_user = build(:user, email: 'user@example.com')
-      expect(duplicate_user).not_to be_valid
-      expect(duplicate_user.errors[:email]).to include(I18n.t('activerecord.errors.models.user.attributes.email.taken'))
-    end
+  describe 'validations' do
+    it { is_expected.to validate_uniqueness_of(:email).case_insensitive }
   end
 
   describe 'associations' do
@@ -105,16 +100,15 @@ RSpec.describe User, type: :model do
   describe '#profile' do
     context 'when user has a producer profile' do
       it 'returns the producer profile' do
-        user = create(:user)
-        producer_profile = create(:producer_profile, user: user)
+        user = create(:user_with_producer_profile)
 
-        expect(user.profile).to eq(producer_profile)
+        expect(user.profile).to eq(user.producer_profile)
       end
     end
 
     context 'when user has no profile' do
       it 'returns nil' do
-        user = create(:user)
+        user = build(:user_without_profile)
 
         expect(user.profile).to be_nil
       end

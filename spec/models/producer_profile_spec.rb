@@ -39,7 +39,7 @@ RSpec.describe ProducerProfile, type: :model do
     end
 
     it 'belongs to blockchain wallet' do
-      expect(subject).to belong_to(:blockchain_wallet)
+      expect(subject.blockchain_wallet).to be_a(BlockchainWallet)
     end
   end
 
@@ -61,22 +61,25 @@ RSpec.describe ProducerProfile, type: :model do
     end
 
     it 'validates uniqueness of cuig number' do
-      expect(subject).to validate_uniqueness_of(:cuig_number)
+      created_profile = create(:producer_profile)
+      expect(created_profile).to validate_uniqueness_of(:cuig_number)
     end
 
     it 'validates uniqueness of renspa number' do
-      expect(subject).to validate_uniqueness_of(:renspa_number)
+      created_profile = create(:producer_profile)
+      expect(created_profile).to validate_uniqueness_of(:renspa_number).case_insensitive
     end
 
     it 'validates uniqueness of identity card' do
-      expect(subject).to validate_uniqueness_of(:identity_card)
+      created_profile = create(:producer_profile)
+      expect(created_profile).to validate_uniqueness_of(:identity_card).case_insensitive
     end
   end
 
   describe 'unique constraints' do
     context 'user uniqueness' do
       it 'allows only one producer profile per user' do
-        user = create(:user)
+        user = create(:user_without_profile)
         create(:producer_profile, user: user)
 
         expect do

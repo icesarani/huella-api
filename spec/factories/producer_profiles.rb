@@ -34,7 +34,16 @@ FactoryBot.define do
     sequence(:renspa_number) { |n| "RENSPA#{n.to_s.rjust(5, '0')}" }
     sequence(:identity_card) { |n| "PROD#{n.to_s.rjust(8, '0')}" }
     name { 'Farm Producer' }
-    association :user
     association :blockchain_wallet
+
+    # Build user for both build and create
+    after(:build) do |producer_profile|
+      producer_profile.user = build(:user_without_profile) unless producer_profile.user
+    end
+
+    # Save user before creating profile
+    before(:create) do |producer_profile|
+      producer_profile.user.save!(validate: false) if producer_profile.user&.new_record?
+    end
   end
 end

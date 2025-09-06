@@ -33,7 +33,16 @@ FactoryBot.define do
     last_name { 'Doe' }
     sequence(:identity_card) { |n| "ID#{n.to_s.rjust(8, '0')}" }
     sequence(:license_number) { |n| "LIC#{n.to_s.rjust(6, '0')}" }
-    association :user
     association :blockchain_wallet
+
+    # Build user for both build and create
+    after(:build) do |vet_profile|
+      vet_profile.user = build(:user_without_profile) unless vet_profile.user
+    end
+
+    # Save user before creating profile
+    before(:create) do |vet_profile|
+      vet_profile.user.save!(validate: false) if vet_profile.user&.new_record?
+    end
   end
 end

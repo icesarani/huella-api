@@ -23,7 +23,9 @@ module Api
       private
 
       def sign_up_params
-        params.require(:user).permit(:email, :password, :password_confirmation)
+        params.require(:user).permit(:email, :password, :password_confirmation,
+                                     producer_profile_attributes: %i[name cuig_number renspa_number identity_card],
+                                     vet_profile_attributes: %i[first_name last_name license_number identity_card])
       end
 
       def configure_sign_up_params
