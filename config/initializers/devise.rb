@@ -19,7 +19,7 @@ end
 #
 # Use this hook to configure devise mailer, warden hooks and so forth.
 # Many of these configuration options can be set straight in your model.
-Devise.setup do |config|
+Devise.setup do |config| # rubocop:disable Metrics/BlockLength
   # The secret key used by Devise. Devise uses this key to generate
   # random tokens. Changing this key will render invalid all existing
   # confirmation, reset password and unlock tokens in the database.
@@ -121,6 +121,20 @@ Devise.setup do |config|
   # requires the Devise mappings to be loaded during boot time the application
   # won't boot properly.
   # config.reload_routes = true
+
+  # ==> Configuration for JWT authentication
+  # Configure JWT authentication for API requests
+  config.jwt do |jwt|
+    jwt.secret = Rails.application.credentials.jwt_secret_key || Rails.application.secret_key_base
+    jwt.dispatch_requests = [
+      ['POST', %r{^/api/v1/sessions$}],
+      ['POST', %r{^/api/v1/registrations$}]
+    ]
+    jwt.revocation_requests = [
+      ['DELETE', %r{^/api/v1/sessions$}]
+    ]
+    jwt.expiration_time = 24.hours.to_i
+  end
 
   # ==> Configuration for :database_authenticatable
   # For bcrypt, this is the cost for hashing the password and defaults to 12. If

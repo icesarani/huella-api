@@ -32,6 +32,21 @@ RSpec.describe 'Api::V1::Sessions', type: :request do
 
         expect(response.headers['set-cookie']).to include('_huella_api_session')
       end
+
+      it 'returns JWT token in Authorization header' do
+        post '/api/v1/sessions', params: { user: { email: user.email, password: user.password } }, as: :json
+
+        expect(response.headers['Authorization']).to be_present
+        expect(response.headers['Authorization']).to start_with('Bearer ')
+      end
+
+      it 'returns user data directly in response' do
+        post '/api/v1/sessions', params: { user: { email: user.email, password: user.password } }, as: :json
+
+        json_response = JSON.parse(response.body)
+        expect(json_response).to have_key('id')
+        expect(json_response).to have_key('email')
+      end
     end
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_05_001320) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_06_202026) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_05_001320) do
     t.index ["locality_id"], name: "index_certification_requests_on_locality_id"
     t.index ["producer_profile_id"], name: "index_certification_requests_on_producer_profile_id"
     t.index ["vet_profile_id"], name: "index_certification_requests_on_vet_profile_id"
+  end
+
+  create_table "jwt_allowlists", force: :cascade do |t|
+    t.string "jti"
+    t.string "aud"
+    t.datetime "exp"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["jti"], name: "index_jwt_allowlists_on_jti"
+    t.index ["user_id"], name: "index_jwt_allowlists_on_user_id"
   end
 
   create_table "localities", force: :cascade do |t|
@@ -117,6 +128,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_05_001320) do
   add_foreign_key "certification_requests", "localities"
   add_foreign_key "certification_requests", "producer_profiles"
   add_foreign_key "certification_requests", "vet_profiles"
+  add_foreign_key "jwt_allowlists", "users"
   add_foreign_key "localities", "provinces"
   add_foreign_key "producer_profiles", "blockchain_wallets"
   add_foreign_key "producer_profiles", "users"

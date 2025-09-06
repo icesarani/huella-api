@@ -7,11 +7,11 @@ module Api
 
       # @route POST /api/v1/sessions (api_v1_sessions)
       def create
-        user = warden.authenticate!(auth_options)
+        self.resource = warden.authenticate!(auth_options)
 
-        sign_in(:user, user)
+        sign_in(resource_name, resource)
 
-        render :create, locals: { user: }
+        render :create, locals: { user: resource }
       end
 
       # @route DELETE /api/v1/sessions (api_v1_sessions)

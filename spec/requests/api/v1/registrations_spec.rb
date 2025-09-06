@@ -8,13 +8,13 @@ RSpec.describe 'Api::V1::Registrations', type: :request do
       let(:valid_producer_params) do
         {
           user: {
-            email: 'producer@example.com',
+            email: "producer#{Time.current.to_f}@example.com",
             password: 'password123',
             producer_profile_attributes: {
               name: 'Juan Pérez',
-              cuig_number: 'CUIG123456',
-              renspa_number: 'RENSPA12345',
-              identity_card: '12345678'
+              cuig_number: "CUIG#{Time.current.to_i}",
+              renspa_number: "RENSPA#{Time.current.to_i}",
+              identity_card: Time.current.to_i.to_s
             }
           }
         }
@@ -30,6 +30,16 @@ RSpec.describe 'Api::V1::Registrations', type: :request do
 
       it 'returns the id of the new user' do
         expect(json_response).to have_key('id')
+      end
+
+      it 'returns user data directly in response' do
+        expect(json_response).to have_key('id')
+        expect(json_response).to have_key('email')
+      end
+
+      it 'returns JWT token in Authorization header' do
+        expect(response.headers['Authorization']).to be_present
+        expect(response.headers['Authorization']).to start_with('Bearer ')
       end
 
       it 'creates a producer profile' do
@@ -52,13 +62,13 @@ RSpec.describe 'Api::V1::Registrations', type: :request do
       let(:valid_vet_params) do
         {
           user: {
-            email: 'vet@example.com',
+            email: "vet#{Time.current.to_f}@example.com",
             password: 'password123',
             vet_profile_attributes: {
               first_name: 'María',
               last_name: 'González',
-              license_number: 'LIC123456',
-              identity_card: '87654321'
+              license_number: "LIC#{Time.current.to_i}",
+              identity_card: (Time.current.to_i + 1000).to_s
             }
           }
         }
@@ -74,6 +84,16 @@ RSpec.describe 'Api::V1::Registrations', type: :request do
 
       it 'returns the id of the new user' do
         expect(json_response).to have_key('id')
+      end
+
+      it 'returns user data directly in response' do
+        expect(json_response).to have_key('id')
+        expect(json_response).to have_key('email')
+      end
+
+      it 'returns JWT token in Authorization header' do
+        expect(response.headers['Authorization']).to be_present
+        expect(response.headers['Authorization']).to start_with('Bearer ')
       end
 
       it 'creates a vet profile' do
@@ -255,21 +275,22 @@ RSpec.describe 'Api::V1::Registrations', type: :request do
       end
 
       context 'when duplicated identity cards' do
+        let(:duplicate_identity_card) { "DUP#{Time.current.to_i}" }
         let!(:existing_producer) do
           create(:user_with_producer_profile).producer_profile.tap do |p|
-            p.update!(identity_card: '12345678')
+            p.update!(identity_card: duplicate_identity_card)
           end
         end
         let(:duplicate_params) do
           {
             user: {
-              email: 'newproducer@example.com',
+              email: "newproducer#{Time.current.to_f}@example.com",
               password: 'password123',
               producer_profile_attributes: {
                 name: 'Juan Pérez',
-                cuig_number: 'CUIG123456',
-                renspa_number: 'RENSPA12345',
-                identity_card: '12345678'
+                cuig_number: "CUIG#{Time.current.to_i + 999}",
+                renspa_number: "RENSPA#{Time.current.to_i + 999}",
+                identity_card: duplicate_identity_card
               }
             }
           }

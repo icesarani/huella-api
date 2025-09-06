@@ -35,6 +35,9 @@ gem 'annotaterb'
 # Adds authentication
 gem 'devise'
 
+# Adds JWT authentication for devise
+gem 'devise-jwt'
+
 # Authorization Options
 #
 # gem "pundit"           # Authorization gem with policies scheme (Object-Oriented)

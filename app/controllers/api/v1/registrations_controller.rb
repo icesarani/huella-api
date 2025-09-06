@@ -14,7 +14,8 @@ module Api
 
         if resource.persisted?
           sign_up(resource_name, resource)
-          render :create, locals: { resource: resource }
+
+          render :create, locals: { resource: }
         else
           render json: { errors: resource.errors }, status: :unprocessable_content
         end

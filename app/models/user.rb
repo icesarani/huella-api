@@ -22,10 +22,12 @@ class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+         :recoverable, :rememberable, :validatable,
+         :jwt_authenticatable, jwt_revocation_strategy: JwtAllowlist
 
   has_one :producer_profile, inverse_of: :user
   has_one :vet_profile, inverse_of: :user
+  has_many :jwt_allowlists, dependent: :destroy
 
   accepts_nested_attributes_for :producer_profile
   accepts_nested_attributes_for :vet_profile

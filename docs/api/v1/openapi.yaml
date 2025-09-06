@@ -8,6 +8,9 @@ info:
     email: icesarani@uade.edu.ar
 servers:
   - url: http://localhost:3000
+security:
+  - cookieAuth: []
+  - bearerAuth: []
 tags:
   - name: Auth
     description: Endpoints for user authentication.
@@ -46,7 +49,7 @@ paths:
                 - user
       responses:
         '200':
-          description: Successfully authenticated. The session token is sent as a cookie.
+          description: Successfully authenticated. The session token is sent as a cookie and JWT token in Authorization header.
           content:
             application/json:
               schema:
@@ -103,7 +106,7 @@ paths:
                 - user
       responses:
         '200':
-          description: Successfully created user account.
+          description: Successfully created user account. JWT token included in Authorization header.
           content:
             application/json:
               schema:
@@ -115,6 +118,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: _huella_api_session
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     User:
       type: object
