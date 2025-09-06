@@ -41,13 +41,13 @@ class ProducerProfile < ApplicationRecord
 
   private
 
+  # Ensure a blockchain wallet is associated with the profile
+  # If not, create one using the Blockchain::WalletCreationService
+  # to handle wallet creation logic.
+  # This abstracts wallet creation and ensures consistency.
   def ensure_blockchain_wallet
     return if blockchain_wallet.present?
 
-    self.blockchain_wallet = BlockchainWallet.create!(address: generate_wallet_address)
-  end
-
-  def generate_wallet_address
-    "0x#{SecureRandom.hex(20)}"
+    self.blockchain_wallet = Blockchain::WalletCreationService.new.call!
   end
 end
