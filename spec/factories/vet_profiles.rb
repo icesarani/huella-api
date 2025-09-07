@@ -44,5 +44,18 @@ FactoryBot.define do
     before(:create) do |vet_profile|
       vet_profile.user.save!(validate: false) if vet_profile.user&.new_record?
     end
+
+    # @example Creating a vet profile with service areas
+    #   vet_profile = create(:vet_profile, :with_service_areas, service_areas_count: 3)
+    #   This will create a vet profile with 3 associated service areas.
+    trait :with_service_areas do
+      transient do
+        service_areas_count { 2 }
+      end
+
+      after(:create) do |vet_profile, evaluator|
+        create_list(:vet_service_area, evaluator.service_areas_count, vet_profile: vet_profile)
+      end
+    end
   end
 end

@@ -23,10 +23,46 @@ module Api
 
       private
 
+      # @return [ActionController::Parameters] Permitted parameters for user registration
+      #   Supports nested attributes for both producer and vet profiles.
+      #   Vet profiles can optionally include service areas through vet_service_areas_attributes.
+      #
+      # @example Registration with vet profile and service areas
+      #   {
+      #     user: {
+      #       email: "vet@example.com",
+      #       password: "password123",
+      #       vet_profile_attributes: {
+      #         first_name: "Dr. Maria",
+      #         last_name: "Garcia",
+      #         license_number: "LIC123",
+      #         identity_card: "12345678",
+      #         vet_service_areas_attributes: [
+      #           { locality_id: 1 },
+      #           { locality_id: 2 }
+      #         ]
+      #       }
+      #     }
+      #   }
+      #
+      # @example Registration with vet profile without service areas
+      #   {
+      #     user: {
+      #       email: "vet@example.com",
+      #       password: "password123",
+      #       vet_profile_attributes: {
+      #         first_name: "Dr. Juan",
+      #         last_name: "Perez",
+      #         license_number: "LIC456",
+      #         identity_card: "87654321"
+      #       }
+      #     }
+      #   }
       def sign_up_params
         params.require(:user).permit(:email, :password, :password_confirmation,
                                      producer_profile_attributes: %i[name cuig_number renspa_number identity_card],
-                                     vet_profile_attributes: %i[first_name last_name license_number identity_card])
+                                     vet_profile_attributes: [:first_name, :last_name, :license_number, :identity_card,
+                                                              { vet_service_areas_attributes: [:locality_id] }])
       end
 
       def configure_sign_up_params

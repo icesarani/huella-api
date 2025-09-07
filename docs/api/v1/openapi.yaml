@@ -264,11 +264,28 @@ components:
           type: string
           description: Identity card number
           example: "87654321"
+        vet_service_areas_attributes:
+          type: array
+          description: Optional array of service areas for the veterinarian
+          items:
+            $ref: '#/components/schemas/VetServiceAreaAttributes'
+          example:
+            - locality_id: 1
+            - locality_id: 2
       required:
         - first_name
         - last_name
         - license_number
         - identity_card
+    VetServiceAreaAttributes:
+      type: object
+      properties:
+        locality_id:
+          type: integer
+          description: The ID of the locality where the veterinarian provides services
+          example: 1
+      required:
+        - locality_id
     Locality:
       type: object
       properties:

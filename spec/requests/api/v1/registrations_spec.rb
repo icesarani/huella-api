@@ -112,6 +112,66 @@ RSpec.describe 'Api::V1::Registrations', type: :request do
       end
     end
 
+    context 'with valid vet profile parameters including service areas' do
+      let!(:locality1) { create(:locality) }
+      let!(:locality2) { create(:locality) }
+      let(:valid_vet_params_with_service_areas) do
+        {
+          user: {
+            email: "vet_with_areas#{Time.current.to_f}@example.com",
+            password: 'password123',
+            vet_profile_attributes: {
+              first_name: 'Carlos',
+              last_name: 'Rodríguez',
+              license_number: "LIC#{Time.current.to_i}",
+              identity_card: (Time.current.to_i + 2000).to_s,
+              vet_service_areas_attributes: [
+                { locality_id: locality1.id },
+                { locality_id: locality2.id }
+              ]
+            }
+          }
+        }
+      end
+
+      # @example Testing vet profile registration with service areas
+      #   This test verifies that a vet profile can be created with associated service areas
+      #   through the nested attributes during registration.
+      it 'creates vet service areas when provided in registration' do
+        post '/api/v1/registrations', params: valid_vet_params_with_service_areas, as: :json
+
+        user = User.find(json_response['id'])
+        expect(user.vet_profile.vet_service_areas.count).to eq(2)
+      end
+    end
+
+    context 'with valid vet profile parameters without service areas' do
+      let(:valid_vet_params_without_service_areas) do
+        {
+          user: {
+            email: "vet_no_areas#{Time.current.to_f}@example.com",
+            password: 'password123',
+            vet_profile_attributes: {
+              first_name: 'Ana',
+              last_name: 'López',
+              license_number: "LIC#{Time.current.to_i + 1}",
+              identity_card: (Time.current.to_i + 3000).to_s
+            }
+          }
+        }
+      end
+
+      # @example Testing vet profile registration without service areas
+      #   This test verifies that a vet profile can be created successfully
+      #   even when no service areas are provided in the registration.
+      it 'creates vet profile without service areas when none provided' do
+        post '/api/v1/registrations', params: valid_vet_params_without_service_areas, as: :json
+
+        user = User.find(json_response['id'])
+        expect(user.vet_profile.vet_service_areas.count).to eq(0)
+      end
+    end
+
     context 'with invalid parameters' do
       context 'when no profile is provided' do
         let(:invalid_params) do
