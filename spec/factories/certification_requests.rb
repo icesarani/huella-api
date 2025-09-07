@@ -6,6 +6,7 @@
 #
 #  id                    :bigint           not null, primary key
 #  address               :string
+#  cattle_breed          :enum             not null
 #  declared_lot_age      :enum             not null
 #  declared_lot_health   :enum             not null
 #  declared_lot_weight   :enum             not null
@@ -32,14 +33,41 @@
 #  fk_rails_...  (producer_profile_id => producer_profiles.id)
 #  fk_rails_...  (vet_profile_id => vet_profiles.id)
 #
-FactoryBot.define do
-  factory :certification_request do
+FactoryBot.define do # rubocop:disable Metrics/BlockLength
+  factory :certification_request do # rubocop:disable Metrics/BlockLength
     status { CertificationRequest.statuses.keys.first }
     address { Faker::Address.full_address }
     locality
     vet_profile { nil }
     producer_profile
     intended_animal_group { 50 }
+    declared_lot_weight { CertificationRequest.declared_lot_weights.keys.sample }
+    declared_lot_age { CertificationRequest.declared_lot_ages.keys.sample }
+    declared_lot_health { CertificationRequest.declared_lot_healths.keys.sample }
+    cattle_breed { CertificationRequest.cattle_breeds.keys.sample }
+    preferred_time_range { (Time.current..Time.current + 30.days) }
+
+    # @example Creating a certification request with file upload
+    #   certification_request = create(:certification_request, :with_file_upload)
+    trait :with_file_upload do
+      after(:create) do |certification_request|
+        create(:file_upload, certification_request: certification_request)
+      end
+    end
+
+    # @example Creating a certification request with processed file upload
+    #   certification_request = create(:certification_request, :with_processed_file_upload)
+    trait :with_processed_file_upload do
+      after(:create) do |certification_request|
+        create(:file_upload, :processed, certification_request: certification_request)
+      end
+    end
+
+    # @example Creating a certification request with specific cattle breed
+    #   certification_request = create(:certification_request, :angus_cattle)
+    trait :angus_cattle do
+      cattle_breed { 'angus' }
+    end
 
     trait :with_vet do
       association :vet_profile, factory: :vet_profile

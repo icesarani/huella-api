@@ -6,6 +6,7 @@
 #
 #  id                    :bigint           not null, primary key
 #  address               :string
+#  cattle_breed          :enum             not null
 #  declared_lot_age      :enum             not null
 #  declared_lot_health   :enum             not null
 #  declared_lot_weight   :enum             not null
@@ -36,9 +37,12 @@ class CertificationRequest < ApplicationRecord
   belongs_to :locality
   belongs_to :vet_profile, optional: true
   belongs_to :producer_profile
+  has_one :file_upload, dependent: :destroy, inverse_of: :certification_request
+
+  accepts_nested_attributes_for :file_upload, allow_destroy: true, reject_if: :all_blank
 
   validates :address, :locality, :producer_profile, :preferred_time_range, :intended_animal_group,
-            :declared_lot_weight, :declared_lot_age, :declared_lot_health, presence: true
+            :declared_lot_weight, :declared_lot_age, :declared_lot_health, :cattle_breed, presence: true
 
   enum :status, { created: 'created',
                   assigned: 'assigned',
@@ -51,4 +55,15 @@ class CertificationRequest < ApplicationRecord
   enum :declared_lot_weight, { skinny: 'skinny', average: 'average', heavy: 'heavy' }, prefix: true
   enum :declared_lot_age, { new_born: 'new_born', young: 'young', mature: 'mature', adult: 'adult' }, prefix: true
   enum :declared_lot_health, { unhealthy: 'unhealthy', common: 'common', healthy: 'healthy' }, prefix: true
+
+  enum :cattle_breed, { angus: 'angus',
+                        hereford: 'hereford',
+                        brahman: 'brahman',
+                        charolais: 'charolais',
+                        limousin: 'limousin',
+                        simmental: 'simmental',
+                        holstein: 'holstein',
+                        jersey: 'jersey',
+                        shorthorn: 'shorthorn',
+                        other: 'other' }
 end

@@ -10,18 +10,47 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_07_023434) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_07_042444) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
+  create_enum "cattle_breed", ["angus", "hereford", "brahman", "charolais", "limousin", "simmental", "holstein", "jersey", "shorthorn", "other"]
   create_enum "certification_request_declared_lot_age", ["new_born", "young", "mature", "adult"]
   create_enum "certification_request_declared_lot_health", ["unhealthy", "common", "healthy"]
   create_enum "certification_request_declared_lot_weight", ["skinny", "average", "heavy"]
   create_enum "certification_status", ["created", "assigned", "executed", "canceled", "rejected"]
   create_enum "request_certification_scheduled_time", ["morning", "afternoon"]
   create_enum "work_schedule_time", ["none", "morning", "afternoon", "both"]
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
 
   create_table "blockchain_wallets", force: :cascade do |t|
     t.string "address"
@@ -47,9 +76,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_07_023434) do
     t.enum "declared_lot_weight", null: false, enum_type: "certification_request_declared_lot_weight"
     t.enum "declared_lot_age", null: false, enum_type: "certification_request_declared_lot_age"
     t.enum "declared_lot_health", null: false, enum_type: "certification_request_declared_lot_health"
+    t.enum "cattle_breed", null: false, enum_type: "cattle_breed"
     t.index ["locality_id"], name: "index_certification_requests_on_locality_id"
     t.index ["producer_profile_id"], name: "index_certification_requests_on_producer_profile_id"
     t.index ["vet_profile_id"], name: "index_certification_requests_on_vet_profile_id"
+  end
+
+  create_table "file_uploads", force: :cascade do |t|
+    t.bigint "certification_request_id", null: false
+    t.string "ai_analyzed_age"
+    t.string "ai_analyzed_weight"
+    t.string "ai_analyzed_breed"
+    t.datetime "processed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["certification_request_id"], name: "index_file_uploads_on_certification_request_id", unique: true
   end
 
   create_table "jwt_allowlists", force: :cascade do |t|
@@ -149,9 +190,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_07_023434) do
     t.index ["vet_profile_id"], name: "index_vet_work_schedules_on_vet_profile_id", unique: true
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "certification_requests", "localities"
   add_foreign_key "certification_requests", "producer_profiles"
   add_foreign_key "certification_requests", "vet_profiles"
+  add_foreign_key "file_uploads", "certification_requests"
   add_foreign_key "jwt_allowlists", "users"
   add_foreign_key "localities", "provinces"
   add_foreign_key "producer_profiles", "blockchain_wallets"
