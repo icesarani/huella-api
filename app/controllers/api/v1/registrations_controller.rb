@@ -27,7 +27,7 @@ module Api
       #   Supports nested attributes for both producer and vet profiles.
       #   Vet profiles can optionally include service areas through vet_service_areas_attributes.
       #
-      # @example Registration with vet profile and service areas
+      # @example Registration with vet profile, service areas, and work schedule
       #   {
       #     user: {
       #       email: "vet@example.com",
@@ -40,7 +40,16 @@ module Api
       #         vet_service_areas_attributes: [
       #           { locality_id: 1 },
       #           { locality_id: 2 }
-      #         ]
+      #         ],
+      #         vet_work_schedule_attributes: {
+      #           monday: "morning",
+      #           tuesday: "both",
+      #           wednesday: "afternoon",
+      #           thursday: "none",
+      #           friday: "both",
+      #           saturday: "morning",
+      #           sunday: "none"
+      #         }
       #       }
       #     }
       #   }
@@ -61,8 +70,12 @@ module Api
       def sign_up_params
         params.require(:user).permit(:email, :password, :password_confirmation,
                                      producer_profile_attributes: %i[name cuig_number renspa_number identity_card],
-                                     vet_profile_attributes: [:first_name, :last_name, :license_number, :identity_card,
-                                                              { vet_service_areas_attributes: [:locality_id] }])
+                                     vet_profile_attributes: [
+                                       :first_name, :last_name, :license_number, :identity_card,
+                                       { vet_service_areas_attributes: [:locality_id] },
+                                       { vet_work_schedule_attributes:
+                                        %i[monday tuesday wednesday thursday friday saturday sunday] }
+                                     ])
       end
 
       def configure_sign_up_params

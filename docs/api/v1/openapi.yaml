@@ -272,6 +272,9 @@ components:
           example:
             - locality_id: 1
             - locality_id: 2
+        vet_work_schedule_attributes:
+          $ref: '#/components/schemas/VetWorkScheduleAttributes'
+          description: Optional work schedule for the veterinarian
       required:
         - first_name
         - last_name
@@ -286,6 +289,51 @@ components:
           example: 1
       required:
         - locality_id
+    VetWorkScheduleAttributes:
+      type: object
+      properties:
+        monday:
+          type: string
+          enum: [none, morning, afternoon, both]
+          description: Work schedule for Monday
+          example: "morning"
+          default: "none"
+        tuesday:
+          type: string
+          enum: [none, morning, afternoon, both]
+          description: Work schedule for Tuesday
+          example: "both"
+          default: "none"
+        wednesday:
+          type: string
+          enum: [none, morning, afternoon, both]
+          description: Work schedule for Wednesday
+          example: "afternoon"
+          default: "none"
+        thursday:
+          type: string
+          enum: [none, morning, afternoon, both]
+          description: Work schedule for Thursday
+          example: "none"
+          default: "none"
+        friday:
+          type: string
+          enum: [none, morning, afternoon, both]
+          description: Work schedule for Friday
+          example: "both"
+          default: "none"
+        saturday:
+          type: string
+          enum: [none, morning, afternoon, both]
+          description: Work schedule for Saturday
+          example: "morning"
+          default: "none"
+        sunday:
+          type: string
+          enum: [none, morning, afternoon, both]
+          description: Work schedule for Sunday
+          example: "none"
+          default: "none"
     Locality:
       type: object
       properties:

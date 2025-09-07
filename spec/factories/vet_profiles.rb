@@ -27,8 +27,8 @@
 #  fk_rails_...  (user_id => users.id)
 #
 
-FactoryBot.define do
-  factory :vet_profile do
+FactoryBot.define do # rubocop:disable Metrics/BlockLength
+  factory :vet_profile do # rubocop:disable Metrics/BlockLength
     first_name { 'John' }
     last_name { 'Doe' }
     sequence(:identity_card) { |n| "ID#{n.to_s.rjust(8, '0')}" }
@@ -55,6 +55,38 @@ FactoryBot.define do
 
       after(:create) do |vet_profile, evaluator|
         create_list(:vet_service_area, evaluator.service_areas_count, vet_profile: vet_profile)
+      end
+    end
+
+    # @example Creating a vet profile with work schedule
+    #   vet_profile = create(:vet_profile, :with_work_schedule)
+    #   This will create a vet profile with a basic work schedule.
+    trait :with_work_schedule do
+      after(:create) do |vet_profile|
+        create(:vet_work_schedule, vet_profile: vet_profile)
+      end
+    end
+
+    # @example Creating a vet profile with full-time work schedule
+    #   vet_profile = create(:vet_profile, :with_full_time_schedule)
+    #   This will create a vet profile with a full-time work schedule.
+    trait :with_full_time_schedule do
+      after(:create) do |vet_profile|
+        create(:vet_work_schedule, :full_time, vet_profile: vet_profile)
+      end
+    end
+
+    # @example Creating a vet profile with service areas and work schedule
+    #   vet_profile = create(:vet_profile, :with_service_areas_and_schedule)
+    #   This will create a complete vet profile with both service areas and work schedule.
+    trait :with_service_areas_and_schedule do
+      transient do
+        service_areas_count { 2 }
+      end
+
+      after(:create) do |vet_profile, evaluator|
+        create_list(:vet_service_area, evaluator.service_areas_count, vet_profile: vet_profile)
+        create(:vet_work_schedule, :weekday_mornings, vet_profile: vet_profile)
       end
     end
   end

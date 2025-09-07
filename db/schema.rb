@@ -10,13 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_06_202026) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_07_013103) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
   create_enum "certification_status", ["created", "assigned", "executed", "canceled", "rejected"]
+  create_enum "work_schedule_time", ["none", "morning", "afternoon", "both"]
 
   create_table "blockchain_wallets", force: :cascade do |t|
     t.string "address"
@@ -125,6 +126,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_06_202026) do
     t.index ["vet_profile_id"], name: "index_vet_service_areas_on_vet_profile_id"
   end
 
+  create_table "vet_work_schedules", force: :cascade do |t|
+    t.bigint "vet_profile_id", null: false
+    t.enum "monday", default: "none", null: false, enum_type: "work_schedule_time"
+    t.enum "tuesday", default: "none", null: false, enum_type: "work_schedule_time"
+    t.enum "wednesday", default: "none", null: false, enum_type: "work_schedule_time"
+    t.enum "thursday", default: "none", null: false, enum_type: "work_schedule_time"
+    t.enum "friday", default: "none", null: false, enum_type: "work_schedule_time"
+    t.enum "saturday", default: "none", null: false, enum_type: "work_schedule_time"
+    t.enum "sunday", default: "none", null: false, enum_type: "work_schedule_time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["vet_profile_id"], name: "index_vet_work_schedules_on_vet_profile_id", unique: true
+  end
+
   add_foreign_key "certification_requests", "localities"
   add_foreign_key "certification_requests", "producer_profiles"
   add_foreign_key "certification_requests", "vet_profiles"
@@ -136,4 +151,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_06_202026) do
   add_foreign_key "vet_profiles", "users"
   add_foreign_key "vet_service_areas", "localities"
   add_foreign_key "vet_service_areas", "vet_profiles"
+  add_foreign_key "vet_work_schedules", "vet_profiles"
 end

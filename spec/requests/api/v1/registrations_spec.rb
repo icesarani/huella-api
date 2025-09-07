@@ -172,6 +172,69 @@ RSpec.describe 'Api::V1::Registrations', type: :request do
       end
     end
 
+    context 'with valid vet profile parameters including work schedule' do
+      let(:valid_vet_params_with_work_schedule) do
+        {
+          user: {
+            email: "vet_with_schedule#{Time.current.to_f}@example.com",
+            password: 'password123',
+            vet_profile_attributes: {
+              first_name: 'Pedro',
+              last_name: 'Martínez',
+              license_number: "LIC#{Time.current.to_i + 2}",
+              identity_card: (Time.current.to_i + 4000).to_s,
+              vet_work_schedule_attributes: {
+                monday: 'morning',
+                tuesday: 'both',
+                wednesday: 'afternoon',
+                thursday: 'none',
+                friday: 'both',
+                saturday: 'morning',
+                sunday: 'none'
+              }
+            }
+          }
+        }
+      end
+
+      # @example Testing vet profile registration with work schedule
+      #   This test verifies that a vet profile can be created with an associated work schedule
+      #   through the nested attributes during registration.
+      it 'creates vet work schedule when provided in registration' do
+        post '/api/v1/registrations', params: valid_vet_params_with_work_schedule, as: :json
+
+        user = User.find(json_response['id'])
+        expect(user.vet_profile.vet_work_schedule).to be_present
+      end
+    end
+
+    context 'with valid vet profile parameters without work schedule' do
+      let(:valid_vet_params_without_work_schedule) do
+        {
+          user: {
+            email: "vet_no_schedule#{Time.current.to_f}@example.com",
+            password: 'password123',
+            vet_profile_attributes: {
+              first_name: 'Sofia',
+              last_name: 'Hernández',
+              license_number: "LIC#{Time.current.to_i + 3}",
+              identity_card: (Time.current.to_i + 5000).to_s
+            }
+          }
+        }
+      end
+
+      # @example Testing vet profile registration without work schedule
+      #   This test verifies that a vet profile can be created successfully
+      #   even when no work schedule is provided in the registration.
+      it 'creates vet profile without work schedule when none provided' do
+        post '/api/v1/registrations', params: valid_vet_params_without_work_schedule, as: :json
+
+        user = User.find(json_response['id'])
+        expect(user.vet_profile.vet_work_schedule).to be_nil
+      end
+    end
+
     context 'with invalid parameters' do
       context 'when no profile is provided' do
         let(:invalid_params) do

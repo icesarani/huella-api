@@ -32,8 +32,11 @@ class VetProfile < ApplicationRecord
   belongs_to :blockchain_wallet, required: true, inverse_of: :vet_profile
   has_many :vet_service_areas, dependent: :destroy
   has_many :localities, through: :vet_service_areas
+  has_one :vet_work_schedule, dependent: :destroy, inverse_of: :vet_profile
 
   accepts_nested_attributes_for :vet_service_areas, allow_destroy: true, reject_if: :all_blank
+
+  accepts_nested_attributes_for :vet_work_schedule, allow_destroy: true, reject_if: :all_blank
 
   validates :first_name, :last_name, :identity_card, :license_number, presence: true
   validates :identity_card, uniqueness: { case_sensitive: false }
