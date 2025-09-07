@@ -7,7 +7,9 @@
 #  id                    :bigint           not null, primary key
 #  address               :string
 #  intended_animal_group :integer
-#  scheduled_date        :date             not null
+#  preferred_time_range  :tstzrange        not null
+#  scheduled_date        :date
+#  scheduled_time        :enum
 #  status                :enum             default("created"), not null
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null

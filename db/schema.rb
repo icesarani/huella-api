@@ -10,13 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_07_013103) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_07_014611) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
   create_enum "certification_status", ["created", "assigned", "executed", "canceled", "rejected"]
+  create_enum "request_certification_scheduled_time", ["morning", "afternoon"]
   create_enum "work_schedule_time", ["none", "morning", "afternoon", "both"]
 
   create_table "blockchain_wallets", force: :cascade do |t|
@@ -34,10 +35,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_07_013103) do
     t.bigint "locality_id", null: false
     t.bigint "vet_profile_id"
     t.bigint "producer_profile_id", null: false
-    t.date "scheduled_date", null: false
+    t.date "scheduled_date"
     t.integer "intended_animal_group"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.enum "scheduled_time", enum_type: "request_certification_scheduled_time"
+    t.tstzrange "preferred_time_range", null: false
     t.index ["locality_id"], name: "index_certification_requests_on_locality_id"
     t.index ["producer_profile_id"], name: "index_certification_requests_on_producer_profile_id"
     t.index ["vet_profile_id"], name: "index_certification_requests_on_vet_profile_id"

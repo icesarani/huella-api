@@ -7,7 +7,9 @@
 #  id                    :bigint           not null, primary key
 #  address               :string
 #  intended_animal_group :integer
-#  scheduled_date        :date             not null
+#  preferred_time_range  :tstzrange        not null
+#  scheduled_date        :date
+#  scheduled_time        :enum
 #  status                :enum             default("created"), not null
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
@@ -37,6 +39,13 @@ FactoryBot.define do
     intended_animal_group { 50 }
 
     trait :with_vet do
+      association :vet_profile, factory: :vet_profile
+    end
+
+    trait :scheduled_morning do
+      scheduled_date { Date.current + 5.days }
+      scheduled_time { 'morning' }
+      preferred_time_range { (Time.current..Time.current + 30.days) }
       association :vet_profile, factory: :vet_profile
     end
   end
