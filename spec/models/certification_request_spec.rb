@@ -6,6 +6,9 @@
 #
 #  id                    :bigint           not null, primary key
 #  address               :string
+#  declared_lot_age      :enum             not null
+#  declared_lot_health   :enum             not null
+#  declared_lot_weight   :enum             not null
 #  intended_animal_group :integer
 #  preferred_time_range  :tstzrange        not null
 #  scheduled_date        :date
@@ -42,8 +45,11 @@ RSpec.describe CertificationRequest, type: :model do
     it { is_expected.to validate_presence_of(:address) }
     it { is_expected.to validate_presence_of(:locality) }
     it { is_expected.to validate_presence_of(:producer_profile) }
-    it { is_expected.to validate_presence_of(:scheduled_date) }
+    it { is_expected.to validate_presence_of(:preferred_time_range) }
     it { is_expected.to validate_presence_of(:intended_animal_group) }
+    it { is_expected.to validate_presence_of(:declared_lot_weight) }
+    it { is_expected.to validate_presence_of(:declared_lot_age) }
+    it { is_expected.to validate_presence_of(:declared_lot_health) }
   end
 
   describe 'enums' do

@@ -6,6 +6,9 @@
 #
 #  id                    :bigint           not null, primary key
 #  address               :string
+#  declared_lot_age      :enum             not null
+#  declared_lot_health   :enum             not null
+#  declared_lot_weight   :enum             not null
 #  intended_animal_group :integer
 #  preferred_time_range  :tstzrange        not null
 #  scheduled_date        :date

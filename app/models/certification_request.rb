@@ -6,6 +6,9 @@
 #
 #  id                    :bigint           not null, primary key
 #  address               :string
+#  declared_lot_age      :enum             not null
+#  declared_lot_health   :enum             not null
+#  declared_lot_weight   :enum             not null
 #  intended_animal_group :integer
 #  preferred_time_range  :tstzrange        not null
 #  scheduled_date        :date
@@ -34,7 +37,8 @@ class CertificationRequest < ApplicationRecord
   belongs_to :vet_profile, optional: true
   belongs_to :producer_profile
 
-  validates :address, :locality, :producer_profile, :scheduled_date, :intended_animal_group, presence: true
+  validates :address, :locality, :producer_profile, :preferred_time_range, :intended_animal_group,
+            :declared_lot_weight, :declared_lot_age, :declared_lot_health, presence: true
 
   enum :status, { created: 'created',
                   assigned: 'assigned',
@@ -43,4 +47,8 @@ class CertificationRequest < ApplicationRecord
                   rejected: 'rejected' }
 
   enum :scheduled_time, { morning: 'morning', afternoon: 'afternoon' }
+
+  enum :declared_lot_weight, { skinny: 'skinny', average: 'average', heavy: 'heavy' }, prefix: true
+  enum :declared_lot_age, { new_born: 'new_born', young: 'young', mature: 'mature', adult: 'adult' }, prefix: true
+  enum :declared_lot_health, { unhealthy: 'unhealthy', common: 'common', healthy: 'healthy' }, prefix: true
 end
