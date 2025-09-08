@@ -3,7 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::Viewers', type: :request do
-
   let!(:user) { FactoryBot.create(:user) }
 
   describe 'GET /api/v1/viewer' do
@@ -35,5 +34,4 @@ RSpec.describe 'Api::V1::Viewers', type: :request do
       end
     end
   end
-
 end
