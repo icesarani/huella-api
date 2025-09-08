@@ -18,6 +18,8 @@ tags:
     description: Endpoints for managing certification requests.
   - name: Users
     description: Endpoints for managing users.
+  - name: Localities
+    description: Endpoints for managing localities.
 paths:
   /api/v1/sessions:
     post:
@@ -199,6 +201,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/localities:
+    get:
+      summary: Retrieves a list of all localities.
+      description: Retrieves a list of all localities ordered by name.
+      operationId: listLocalities
+      tags: [Localities]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successfully retrieved list of localities.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Locality'
         '500':
           description: Internal server error.
           content:

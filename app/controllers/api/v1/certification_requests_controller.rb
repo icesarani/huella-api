@@ -3,6 +3,8 @@
 module Api
   module V1
     class CertificationRequestsController < BaseController
+      # Devise authentication
+      before_action :authenticate_user!, only: [:create]
       before_action :ensure_producer!, only: [:create]
 
       # @route POST /api/v1/certification_requests (api_v1_certification_requests)

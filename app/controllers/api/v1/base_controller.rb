@@ -5,9 +5,6 @@ module Api
     class BaseController < ActionController::API
       respond_to :json
 
-      # Devise authentication
-      before_action :authenticate_user!, except: [:health_check]
-
       # Error handling
       rescue_from StandardError, with: :render_internal_server_error
       rescue_from ActiveRecord::RecordNotFound, with: :render_not_found

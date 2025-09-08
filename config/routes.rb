@@ -22,6 +22,8 @@ Rails.application.routes.draw do
       resources :certification_requests, only: [:create]
 
       resource :viewer, only: [:show]
+
+      resources :localities, only: [:index]
     end
   end
 
