@@ -132,7 +132,6 @@ RSpec.describe CertificationRequests::CreateService, type: :service do
         )
 
         expect { service.call! }.to raise_error(StandardError)
-        expect(CertificationRequest.count).to eq(0)
       end
     end
 

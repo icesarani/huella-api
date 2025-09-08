@@ -1,6 +1,42 @@
 
 es:
   hello: "Hola mundo"
+
+  time:
+    formats:
+      long: "%d de %B de %Y a las %H:%M"
+  
+  date:
+    formats:
+      long: "%d de %B de %Y"
+    month_names:
+      - ~
+      - enero
+      - febrero
+      - marzo
+      - abril
+      - mayo
+      - junio
+      - julio
+      - agosto
+      - septiembre
+      - octubre
+      - noviembre
+      - diciembre
+    abbr_month_names:
+      - ~
+      - ene
+      - feb
+      - mar
+      - abr
+      - may
+      - jun
+      - jul
+      - ago
+      - sep
+      - oct
+      - nov
+      - dic
   
   errors:
     not_found: "Recurso no encontrado"
@@ -80,3 +116,87 @@ es:
               blank: "no puede estar en blanco"
               too_short: "es demasiado corto (mínimo 2 caracteres)"
               too_long: "es demasiado largo (máximo 100 caracteres)"
+
+  # PDF translations
+  pdf:
+    common:
+      yes: "Si"
+      no: "No"
+      not_available: "No disponible"
+    
+    cattle_certification:
+      title: "Certificado de Ganado"
+      subtitle: "Huella Rural - Sistema de Certificación Ganadera"
+      generated_at: "Generado el: %{date}"
+      
+      # Sections
+      producer_info: "Información del Productor"
+      veterinarian_info: "Información del Veterinario"
+      animal_info: "Información del Animal"
+      
+      # Producer fields
+      producer_name: "Nombre del Productor"
+      cuig_number: "Número CUIG"
+      renspa_number: "Número RENSPA"
+      farm_address: "Dirección del Establecimiento"
+      locality: "Localidad"
+      
+      # Veterinarian fields
+      vet_name: "Nombre del Veterinario"
+      license_number: "Número de Matrícula"
+      certification_date: "Fecha de Certificación"
+      
+      # Animal fields
+      cuig_code: "Código CUIG"
+      alternative_code: "Código Alternativo"
+      gender: "Sexo"
+      category: "Categoría"
+      estimated_weight: "Peso Estimado"
+      dental_chronology: "Cronología Dental"
+      pregnant: "Preñada"
+      pregnancy_method: "Método de Diagnóstico de Preñez"
+      corporal_condition: "Condición Corporal"
+      brucellosis_diagnosis: "Diagnóstico de Brucelosis"
+      geolocation: "Coordenadas GPS"
+      comments: "Comentarios"
+      
+      # Formatting
+      weight_format: "%{weight} kg"
+      coordinates_format: "Lat: %{lat}, Lng: %{lng}"
+      photo_unavailable: "Foto no disponible"
+      
+      # Footer
+      signature: "Huella Rural"
+      signature_subtitle: "Sistema de Certificación Ganadera Digital"
+      disclaimer: "Este documento es generado automáticamente y tiene validez legal como certificado de ganado."
+
+  # Enums translations
+  enums:
+    cattle_certification:
+      gender:
+        male: "Macho"
+        female: "Hembra"
+      
+      category:
+        unweaned_calf: "Ternero no destetado"
+        weaned_heifer: "Vaquillona destetada"
+        weaned_steer: "Novillo destetado"
+      
+      dental_chronology:
+        milk_incisors_first_medians: "Incisivos de leche - Primeras medianas"
+        milk_second_medians: "Incisivos de leche - Segundas medianas"
+        milk_corners: "Incisivos de leche - Esquinas"
+        leveling_incisors: "Nivelación de incisivos"
+        leveling_first_medians: "Nivelación primeras medianas"
+        leveling_second_medians: "Nivelación segundas medianas"
+        leveling_corners: "Nivelación esquinas"
+        permanent_incisors: "Incisivos permanentes"
+        permanent_first_medians: "Primeras medianas permanentes"
+        permanent_second_medians: "Segundas medianas permanentes"
+        permanent_corners: "Esquinas permanentes"
+        full_dentition: "Dentición completa"
+      
+      pregnancy_diagnosis_method:
+        palpation: "Palpación"
+        ultrasound: "Ultrasonido"
+        blood_test: "Análisis de sangre"

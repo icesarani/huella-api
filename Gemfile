@@ -79,6 +79,10 @@ gem 'openapi_contracts'
 # Blockchain integration
 gem 'eth', '~> 0.5.15'
 
+# PDF generation
+gem 'prawn'
+gem 'prawn-table'
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem 'debug', platforms: %i[mri mswin mswin64 mingw x64_mingw]
@@ -100,6 +104,9 @@ group :development, :test do
 
   # This gem provides a simple way to validate the coverage of your tests.
   gem 'simplecov'
+
+  # PDF reader for testing
+  gem 'pdf-reader'
 end
 
 # CORS handling for cross-origin requests

@@ -67,5 +67,44 @@ FactoryBot.define do # rubocop:disable Metrics/BlockLength
       gender { :male }
       estimated_weight { 250 }
     end
+
+    trait :with_photo do
+      after(:create) do |cattle_cert|
+        cattle_cert.photo.attach(
+          io: File.open(Rails.root.join('spec/fixtures/files/sample_image.png')),
+          filename: 'sample_image.png',
+          content_type: 'image/png'
+        )
+      end
+    end
+
+    trait :complete_data do
+      cuig_code { 'CUIG123456' }
+      alternative_code { 'ALT789' }
+      gender { :male }
+      category { :unweaned_calf }
+      dental_chronology { :milk_incisors_first_medians }
+      estimated_weight { 150 }
+      pregnant { false }
+      pregnancy_diagnosis_method { :palpation }
+      corporal_condition { 3 }
+      brucellosis_diagnosis { 'Negativo' }
+      comments { 'Animal en excelente estado de salud' }
+      geolocation_points { { lat: -34.6037, lng: -58.3816 } }
+      data_taken_at { 1.day.ago }
+    end
+
+    trait :minimal_data do
+      cuig_code { nil }
+      alternative_code { nil }
+      dental_chronology { nil }
+      estimated_weight { nil }
+      pregnant { nil }
+      pregnancy_diagnosis_method { nil }
+      corporal_condition { nil }
+      brucellosis_diagnosis { nil }
+      comments { nil }
+      geolocation_points { nil }
+    end
   end
 end
