@@ -20,6 +20,8 @@ Rails.application.routes.draw do
       end
 
       resources :certification_requests, only: [:create]
+
+      resource :viewer, only: [:show]
     end
   end
 
