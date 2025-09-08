@@ -41,6 +41,13 @@ en:
       creation_failed: "Failed to create certification request"
       file_processing_failed: "Failed to process uploaded file"
       veterinarian_assignment_failed: "No available veterinarian found for the requested time and location"
+    
+    certification:
+      request_not_assigned: "Certification request is not assigned to any veterinarian"
+      request_already_finalized: "Certification request is already finalized and cannot be certified"
+      veterinarian_not_assigned: "Veterinarian is not assigned to this certification request"
+      too_many_certifications: "Too many certifications provided (%{provided}), maximum allowed is %{expected}"
+      photo_required: "Photo is required for each cattle certification"
       
   activerecord:
     errors:

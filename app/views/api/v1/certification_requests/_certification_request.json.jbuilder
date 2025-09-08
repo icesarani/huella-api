@@ -55,4 +55,13 @@ json.certification_request do # rubocop:disable Metrics/BlockLength
   else
     json.file_upload nil
   end
+
+  # Certified lot information (if present)
+  if certification_request.certified_lot.present?
+    json.certified_lot do
+      json.partial! 'api/v1/certified_lots/certified_lot', certified_lot: certification_request.certified_lot
+    end
+  else
+    json.certified_lot nil
+  end
 end

@@ -229,6 +229,173 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /api/v1/certification_requests/{id}/certify:
+    post:
+      summary: Certifies a certification request by creating a certified lot with cattle certifications.
+      description: Creates a certified lot with multiple cattle certifications for an assigned certification request. Only the assigned veterinarian can certify the request.
+      operationId: certifyCertificationRequest
+      tags: [Certification Requests]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The certification request ID
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        description: Cattle certifications data with photos. Send as many certifications as needed using indexed form fields.
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                "certifications[0][cuig_code]":
+                  type: string
+                  description: CUIG code for first certification
+                  example: "CUIG123456"
+                "certifications[0][alternative_code]":
+                  type: string
+                  description: Alternative code for first certification
+                  example: "ALT789"
+                "certifications[0][gender]":
+                  type: string
+                  enum: [male, female]
+                  description: Gender for first certification
+                  example: "male"
+                "certifications[0][category]":
+                  type: string
+                  enum: [unweaned_calf, weaned_heifer, weaned_steer]
+                  description: Category for first certification
+                  example: "unweaned_calf"
+                "certifications[0][dental_chronology]":
+                  type: string
+                  enum: [milk_incisors_first_medians, milk_second_medians, milk_corners, leveling_incisors, leveling_first_medians, leveling_second_medians, leveling_corners, permanent_incisors, permanent_first_medians, permanent_second_medians, permanent_corners, full_dentition]
+                  description: Dental chronology for first certification
+                "certifications[0][estimated_weight]":
+                  type: integer
+                  minimum: 1
+                  maximum: 1000
+                  description: Estimated weight in kg for first certification
+                  example: 150
+                "certifications[0][pregnant]":
+                  type: boolean
+                  description: Pregnancy status for first certification
+                "certifications[0][pregnancy_diagnosis_method]":
+                  type: string
+                  enum: [palpation, ultrasound, blood_test]
+                  description: Pregnancy diagnosis method for first certification
+                "certifications[0][pregnancy_service_range]":
+                  type: string
+                  description: Pregnancy service date range for first certification
+                  example: "2024-01-01..2024-02-01"
+                "certifications[0][corporal_condition]":
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                  description: Corporal condition score for first certification
+                "certifications[0][brucellosis_diagnosis]":
+                  type: string
+                  description: Brucellosis diagnosis for first certification
+                "certifications[0][comments]":
+                  type: string
+                  description: Comments for first certification
+                "certifications[0][data_taken_at]":
+                  type: string
+                  format: date-time
+                  description: When data was taken for first certification
+                  example: "2024-12-01T10:00:00-03:00"
+                "certifications[0][geolocation_points][lat]":
+                  type: number
+                  format: float
+                  minimum: -90
+                  maximum: 90
+                  description: Latitude for first certification
+                  example: -34.6037
+                "certifications[0][geolocation_points][lng]":
+                  type: number
+                  format: float
+                  minimum: -180
+                  maximum: 180
+                  description: Longitude for first certification
+                  example: -58.3816
+                "certifications[0][photo]":
+                  type: string
+                  format: binary
+                  description: Photo for first certification (required)
+              required:
+                - "certifications[0][gender]"
+                - "certifications[0][category]"
+                - "certifications[0][photo]"
+              additionalProperties:
+                description: Additional certifications can be sent using the same pattern with incremented indexes (certifications[1][field], certifications[2][field], etc.)
+            examples:
+              single_certification:
+                summary: Single cattle certification
+                description: Example with one cattle certification
+                value:
+                  "certifications[0][cuig_code]": "CUIG123456"
+                  "certifications[0][gender]": "male"
+                  "certifications[0][category]": "unweaned_calf"
+                  "certifications[0][estimated_weight]": 150
+                  "certifications[0][data_taken_at]": "2024-12-01T10:00:00-03:00"
+                  "certifications[0][photo]": "(binary file)"
+              multiple_certifications:
+                summary: Multiple cattle certifications
+                description: Example with multiple cattle certifications
+                value:
+                  "certifications[0][cuig_code]": "CUIG123456"
+                  "certifications[0][gender]": "male"
+                  "certifications[0][category]": "unweaned_calf"
+                  "certifications[0][estimated_weight]": 150
+                  "certifications[0][data_taken_at]": "2024-12-01T10:00:00-03:00"
+                  "certifications[0][photo]": "(binary file)"
+                  "certifications[1][cuig_code]": "CUIG789012"
+                  "certifications[1][gender]": "female"
+                  "certifications[1][category]": "weaned_heifer"
+                  "certifications[1][estimated_weight]": 220
+                  "certifications[1][data_taken_at]": "2024-12-01T11:00:00-03:00"
+                  "certifications[1][photo]": "(binary file)"
+      responses:
+        '201':
+          description: Successfully certified the request and created certified lot.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CertificationRequestCreate'
+        '401':
+          description: Unauthorized - user not authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden - user is not a veterinarian.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Certification request not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Certification validation errors (request not assigned, too many certifications, etc.).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /api/v1/viewer:
     get:
       summary: Retrieves the current authenticated user's information.
@@ -657,6 +824,11 @@ components:
           oneOf:
             - type: 'null'
             - $ref: '#/components/schemas/AiAnalyzedFileUpload'
+        certified_lot:
+          oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/CertifiedLot'
+          description: Certified lot information (if request has been certified)
         created_at:
           type: string
           format: date-time
@@ -665,6 +837,240 @@ components:
           type: string
           format: date-time
           example: "2024-12-02T10:30:00-03:00"
+    CertifiedLotResponse:
+      type: object
+      properties:
+        certified_lot:
+          $ref: '#/components/schemas/CertifiedLot'
+    CertifiedLot:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Certified lot identifier
+          example: 1
+        created_at:
+          type: string
+          format: date-time
+          description: When the lot was created
+          example: "2024-12-02T10:30:00-03:00"
+        updated_at:
+          type: string
+          format: date-time
+          description: When the lot was last updated
+          example: "2024-12-02T10:30:00-03:00"
+        certification_request:
+          type: object
+          description: Associated certification request basic info
+          properties:
+            id:
+              type: integer
+              example: 1
+            address:
+              type: string
+              example: "Farm Address 123"
+            intended_animal_group:
+              type: integer
+              example: 50
+            declared_lot_weight:
+              type: integer
+              example: 450
+            declared_lot_age:
+              type: integer
+              example: 24
+            cattle_breed:
+              type: string
+              example: "angus"
+            status:
+              type: string
+              example: "assigned"
+        cattle_certifications:
+          type: array
+          description: Array of cattle certifications in this lot
+          items:
+            $ref: '#/components/schemas/CattleCertification'
+    CattleCertification:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Cattle certification identifier
+          example: 1
+        cuig_code:
+          type: string
+          description: CUIG code
+          example: "CUIG123456"
+        alternative_code:
+          type: string
+          description: Alternative code
+          example: "ALT789"
+        gender:
+          type: string
+          enum: [male, female]
+          description: Gender of the cattle
+          example: "male"
+        category:
+          type: string
+          enum: [unweaned_calf, weaned_heifer, weaned_steer]
+          description: Category of the cattle
+          example: "unweaned_calf"
+        dental_chronology:
+          type: string
+          enum: [milk_incisors_first_medians, milk_second_medians, milk_corners, leveling_incisors, leveling_first_medians, leveling_second_medians, leveling_corners, permanent_incisors, permanent_first_medians, permanent_second_medians, permanent_corners, full_dentition]
+          description: Dental chronology
+          example: "milk_incisors_first_medians"
+        estimated_weight:
+          type: integer
+          description: Estimated weight in kg
+          example: 150
+        pregnant:
+          type: boolean
+          description: Whether the cattle is pregnant
+          example: false
+        pregnancy_diagnosis_method:
+          type: string
+          enum: [palpation, ultrasound, blood_test]
+          description: Pregnancy diagnosis method
+          example: "palpation"
+        pregnancy_service_range:
+          type: string
+          description: Pregnancy service date range
+          example: "2024-01-01T00:00:00-03:00..2024-02-01T00:00:00-03:00"
+        corporal_condition:
+          type: integer
+          description: Corporal condition score
+          example: 3
+        brucellosis_diagnosis:
+          type: string
+          description: Brucellosis diagnosis
+          example: "Negative"
+        comments:
+          type: string
+          description: Additional comments
+          example: "Healthy cattle"
+        geolocation_points:
+          type: object
+          description: GPS coordinates
+          properties:
+            lat:
+              type: number
+              format: float
+              example: -34.6037
+            lng:
+              type: number
+              format: float
+              example: -58.3816
+        data_taken_at:
+          type: string
+          format: date-time
+          description: When the data was taken
+          example: "2024-12-01T10:00:00-03:00"
+        photo_url:
+          type: string
+          format: uri
+          description: URL to the cattle photo
+          example: "https://example.com/rails/active_storage/blobs/xyz123/cattle_photo.jpg"
+        created_at:
+          type: string
+          format: date-time
+          description: When the certification was created
+          example: "2024-12-02T10:30:00-03:00"
+        updated_at:
+          type: string
+          format: date-time
+          description: When the certification was last updated
+          example: "2024-12-02T10:30:00-03:00"
+    CattleCertificationInput:
+      type: object
+      description: Input schema for cattle certification in multipart/form-data
+      properties:
+        cuig_code:
+          type: string
+          description: CUIG code for the cattle
+          example: "CUIG123456"
+        alternative_code:
+          type: string
+          description: Alternative code for the cattle
+          example: "ALT789"
+        gender:
+          type: string
+          enum: [male, female]
+          description: Gender of the cattle
+          example: "male"
+        category:
+          type: string
+          enum: [unweaned_calf, weaned_heifer, weaned_steer]
+          description: Category of the cattle
+          example: "unweaned_calf"
+        dental_chronology:
+          type: string
+          enum: [milk_incisors_first_medians, milk_second_medians, milk_corners, leveling_incisors, leveling_first_medians, leveling_second_medians, leveling_corners, permanent_incisors, permanent_first_medians, permanent_second_medians, permanent_corners, full_dentition]
+          description: Dental chronology of the cattle
+          example: "milk_incisors_first_medians"
+        estimated_weight:
+          type: integer
+          description: Estimated weight in kg
+          minimum: 1
+          maximum: 1000
+          example: 150
+        pregnant:
+          type: boolean
+          description: Whether the cattle is pregnant
+          example: false
+        pregnancy_diagnosis_method:
+          type: string
+          enum: [palpation, ultrasound, blood_test]
+          description: Method used for pregnancy diagnosis
+          example: "palpation"
+        pregnancy_service_range:
+          type: string
+          description: Pregnancy service date range (format depends on backend)
+          example: "2024-01-01..2024-02-01"
+        corporal_condition:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: Corporal condition score (1-5 scale)
+          example: 3
+        brucellosis_diagnosis:
+          type: string
+          description: Brucellosis diagnosis result
+          example: "Negative"
+        comments:
+          type: string
+          description: Additional comments about the cattle
+          example: "Healthy cattle"
+        data_taken_at:
+          type: string
+          format: date-time
+          description: When the data was taken (cannot be in the future)
+          example: "2024-12-01T10:00:00-03:00"
+        geolocation_points:
+          type: object
+          description: GPS coordinates where data was taken
+          properties:
+            lat:
+              type: number
+              format: float
+              description: Latitude coordinate
+              minimum: -90
+              maximum: 90
+              example: -34.6037
+            lng:
+              type: number
+              format: float
+              description: Longitude coordinate
+              minimum: -180
+              maximum: 180
+              example: -58.3816
+        photo:
+          type: string
+          format: binary
+          description: Required photo of the cattle (JPEG/PNG)
+      required:
+        - photo
+        - gender
+        - category
     Error:
       type: object
       properties:

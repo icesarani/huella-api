@@ -15,6 +15,13 @@ es:
       file_processing_failed: "Error al procesar el archivo cargado"
       file_required: "debe incluir un archivo"
       veterinarian_assignment_failed: "No se encontró veterinario disponible para la hora y ubicación solicitadas"
+    
+    certification:
+      request_not_assigned: "La solicitud de certificación no está asignada a ningún veterinario"
+      request_already_finalized: "La solicitud de certificación ya está finalizada y no puede ser certificada"
+      veterinarian_not_assigned: "El veterinario no está asignado a esta solicitud de certificación"
+      too_many_certifications: "Se proporcionaron demasiadas certificaciones (%{provided}), el máximo permitido es %{expected}"
+      photo_required: "Se requiere foto para cada certificación de ganado"
 
   activerecord:
     errors:

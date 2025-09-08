@@ -3,6 +3,7 @@
 module Api
   module V1
     class BaseController < ActionController::API
+      include CertificationErrors
       respond_to :json
 
       # Error handling
@@ -10,6 +11,13 @@ module Api
       rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
       rescue_from ActiveRecord::RecordInvalid, with: :render_unprocessable_entity
       rescue_from ActionController::ParameterMissing, with: :render_bad_request
+
+      # Certification specific errors
+      rescue_from CertificationErrors::RequestNotAssignedError, with: :render_certification_error
+      rescue_from CertificationErrors::RequestAlreadyFinalizedError, with: :render_certification_error
+      rescue_from CertificationErrors::VeterinarianNotAssignedError, with: :render_certification_error
+      rescue_from CertificationErrors::TooManyCertificationsError, with: :render_certification_error
+      rescue_from CertificationErrors::PhotoRequiredError, with: :render_certification_error
 
       # @route GET /api/v1/health_check (api_v1_health_check)
       def health_check
@@ -94,6 +102,16 @@ module Api
           message: error.message,
           code: 'internal_server_error',
           status: :internal_server_error
+        )
+      end
+
+      # Render certification specific errors as unprocessable entity
+      # @param error [CertificationErrors::*]
+      def render_certification_error(error)
+        render_error(
+          message: error.message,
+          code: 'certification_error',
+          status: :unprocessable_content
         )
       end
     end

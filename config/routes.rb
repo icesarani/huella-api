@@ -19,7 +19,11 @@ Rails.application.routes.draw do
         resource :registrations, only: %i[create]
       end
 
-      resources :certification_requests, only: [:create]
+      resources :certification_requests, only: [:create] do
+        member do
+          post :certify
+        end
+      end
 
       resource :viewer, only: [:show]
 

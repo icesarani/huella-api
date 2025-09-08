@@ -77,5 +77,29 @@ FactoryBot.define do # rubocop:disable Metrics/BlockLength
       preferred_time_range { (Time.current..Time.current + 30.days) }
       association :vet_profile, factory: :vet_profile
     end
+
+    # Status traits
+    trait :created do
+      status { 'created' }
+      vet_profile { nil }
+    end
+
+    trait :assigned do
+      status { 'assigned' }
+      association :vet_profile, factory: :vet_profile
+    end
+
+    trait :executed do
+      status { 'executed' }
+      association :vet_profile, factory: :vet_profile
+    end
+
+    trait :canceled do
+      status { 'canceled' }
+    end
+
+    trait :rejected do
+      status { 'rejected' }
+    end
   end
 end

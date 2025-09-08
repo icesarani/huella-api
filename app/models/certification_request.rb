@@ -37,6 +37,7 @@ class CertificationRequest < ApplicationRecord
   belongs_to :vet_profile, optional: true
   belongs_to :producer_profile
   has_one :file_upload, dependent: :destroy, inverse_of: :certification_request
+  has_one :certified_lot, dependent: :destroy
 
   accepts_nested_attributes_for :file_upload, allow_destroy: true, reject_if: :all_blank
 
