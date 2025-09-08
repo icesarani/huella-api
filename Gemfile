@@ -102,6 +102,9 @@ group :development, :test do
   gem 'simplecov'
 end
 
+# CORS handling for cross-origin requests
+gem 'rack-cors', '~> 1.0.3'
+
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem 'web-console'
