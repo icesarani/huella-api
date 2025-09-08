@@ -10,14 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_07_171844) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_08_032229) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
   create_enum "cattle_breed", ["angus", "hereford", "brahman", "charolais", "limousin", "simmental", "holstein", "jersey", "shorthorn", "other"]
+  create_enum "cattle_category", ["unweaned_calf", "weaned_heifer", "weaned_steer"]
   create_enum "certification_status", ["created", "assigned", "executed", "canceled", "rejected"]
+  create_enum "dental_chronology", ["milk_incisors_first_medians", "milk_second_medians", "milk_corners", "leveling_incisors", "leveling_first_medians", "leveling_second_medians", "leveling_corners", "permanent_incisors", "permanent_first_medians", "permanent_second_medians", "permanent_corners", "full_dentition"]
+  create_enum "gender", ["male", "female"]
+  create_enum "pregnancy_diagnosis_method", ["palpation", "ultrasound", "blood_test"]
   create_enum "request_certification_scheduled_time", ["morning", "afternoon"]
   create_enum "work_schedule_time", ["none", "morning", "afternoon", "both"]
 
@@ -58,6 +62,27 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_07_171844) do
     t.index ["address"], name: "index_blockchain_wallets_on_address", unique: true
   end
 
+  create_table "cattle_certifications", force: :cascade do |t|
+    t.bigint "certified_lot_id", null: false
+    t.string "cuig_code"
+    t.string "alternative_code"
+    t.enum "gender", null: false, enum_type: "gender"
+    t.enum "category", null: false, enum_type: "cattle_category"
+    t.enum "dental_chronology", enum_type: "dental_chronology"
+    t.integer "estimated_weight"
+    t.boolean "pregnant"
+    t.enum "pregnancy_diagnosis_method", enum_type: "pregnancy_diagnosis_method"
+    t.tstzrange "pregnancy_service_range"
+    t.integer "corporal_condition"
+    t.string "brucellosis_diagnosis"
+    t.string "comments"
+    t.jsonb "geolocation_points", default: {"lat"=>0, "lng"=>0}
+    t.datetime "data_taken_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["certified_lot_id"], name: "index_cattle_certifications_on_certified_lot_id"
+  end
+
   create_table "certification_requests", force: :cascade do |t|
     t.enum "status", default: "created", null: false, enum_type: "certification_status"
     t.string "address"
@@ -76,6 +101,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_07_171844) do
     t.index ["locality_id"], name: "index_certification_requests_on_locality_id"
     t.index ["producer_profile_id"], name: "index_certification_requests_on_producer_profile_id"
     t.index ["vet_profile_id"], name: "index_certification_requests_on_vet_profile_id"
+  end
+
+  create_table "certified_lots", force: :cascade do |t|
+    t.bigint "certification_request_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["certification_request_id"], name: "index_certified_lots_on_certification_request_id"
   end
 
   create_table "file_uploads", force: :cascade do |t|
@@ -188,9 +220,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_07_171844) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "cattle_certifications", "certified_lots"
   add_foreign_key "certification_requests", "localities"
   add_foreign_key "certification_requests", "producer_profiles"
   add_foreign_key "certification_requests", "vet_profiles"
+  add_foreign_key "certified_lots", "certification_requests"
   add_foreign_key "file_uploads", "certification_requests"
   add_foreign_key "jwt_allowlists", "users"
   add_foreign_key "localities", "provinces"

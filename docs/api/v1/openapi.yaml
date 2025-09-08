@@ -145,10 +145,59 @@ paths:
             schema:
               type: object
               properties:
-                certification_request:
-                  $ref: '#/components/schemas/CertificationRequestInput'
+                "certification_request[address]":
+                  type: string
+                  description: Farm address
+                  example: "Farm Address 123"
+                "certification_request[locality_id]":
+                  type: integer
+                  description: Locality identifier
+                  example: 1
+                "certification_request[intended_animal_group]":
+                  type: integer
+                  description: Number of animals in the group
+                  example: 50
+                "certification_request[declared_lot_weight]":
+                  type: integer
+                  description: Declared weight of the lot in kg
+                  minimum: 1
+                  maximum: 2000
+                  example: 450
+                "certification_request[declared_lot_age]":
+                  type: integer
+                  description: Declared age of the lot in months
+                  minimum: 1
+                  maximum: 240
+                  example: 24
+                "certification_request[cattle_breed]":
+                  type: string
+                  enum: [angus, hereford, brahman, charolais, limousin, simmental, holstein, jersey, shorthorn, other]
+                  description: Cattle breed
+                  example: "angus"
+                "certification_request[preferred_time_range_start]":
+                  type: string
+                  format: date-time
+                  description: Preferred start time for certification
+                  example: "2024-12-02T09:00:00-03:00"
+                "certification_request[preferred_time_range_end]":
+                  type: string
+                  format: date-time
+                  description: Preferred end time for certification
+                  example: "2024-12-02T17:00:00-03:00"
+                "certification_request[file]":
+                  type: string
+                  format: binary
+                  description: Required image file (JPEG/PNG only)
               required:
-                - certification_request
+                - "certification_request[address]"
+                - "certification_request[locality_id]"
+                - "certification_request[intended_animal_group]"
+                - "certification_request[declared_lot_weight]"
+                - "certification_request[declared_lot_age]"
+                - "certification_request[cattle_breed]"
+                - "certification_request[preferred_time_range_start]"
+                - "certification_request[preferred_time_range_end]"
+                - "certification_request[file]"
       responses:
         '201':
           description: Successfully created certification request.
