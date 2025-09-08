@@ -85,7 +85,13 @@ FactoryBot.define do # rubocop:disable Metrics/BlockLength
       end
 
       after(:create) do |vet_profile, evaluator|
-        create_list(:vet_service_area, evaluator.service_areas_count, vet_profile: vet_profile)
+        # Reuse a single province but create distinct localities to satisfy uniqueness (vet_profile, locality)
+        base_locality = Locality.first || create(:locality)
+        province = base_locality.respond_to?(:province) ? base_locality.province : nil
+        evaluator.service_areas_count.times do
+          locality = province ? create(:locality, province: province) : create(:locality)
+          create(:vet_service_area, vet_profile: vet_profile, locality: locality)
+        end
         create(:vet_work_schedule, :weekday_mornings, vet_profile: vet_profile)
       end
     end

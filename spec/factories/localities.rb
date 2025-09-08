@@ -24,26 +24,26 @@
 
 FactoryBot.define do
   factory :locality do
-    sequence(:indec_code) { |n| "06#{n.to_s.rjust(9, '0')}" }
-    sequence(:name) { |n| "Localidad #{n}" }
-    category { :simple_locality }
+    indec_code { "06#{rand(100_000_000..999_999_999)}" }
+    name { "Localidad #{rand(1000..9999)}" }
+    category { 'simple_locality' }
     association :province
 
     trait :city do
-      category { :city }
+      category { 'city' }
     end
 
     trait :la_plata do
       indec_code { '06001010000' }
       name { 'La Plata' }
-      category { :city }
+      category { 'city' }
       association :province, :buenos_aires
     end
 
     trait :mar_del_plata do
       indec_code { '06270070000' }
       name { 'Mar del Plata' }
-      category { :city }
+      category { 'city' }
       association :province, :buenos_aires
     end
   end

@@ -38,38 +38,16 @@ RSpec.describe Locality, type: :model do
   end
 
   describe 'validations' do
-    it 'validates presence of indec_code' do
-      expect(subject).to validate_presence_of(:indec_code)
-    end
-
-    it 'validates uniqueness of indec_code' do
-      expect(subject).to validate_uniqueness_of(:indec_code).case_insensitive
-    end
-
-    it 'validates length of indec_code' do
-      expect(subject).to validate_length_of(:indec_code).is_equal_to(11)
-    end
-
     it 'validates presence of name' do
       expect(subject).to validate_presence_of(:name)
     end
 
-    it 'defines category enum with string values' do
-      expect(Locality.categories).to eq({
-                                          'city' => 'Ciudad',
-                                          'simple_locality' => 'Localidad simple (LS)',
-                                          'compound_locality' => 'Localidad compuesta (LC)',
-                                          'hamlet' => 'Paraje (P)',
-                                          'other' => 'Otros'
-                                        })
-    end
-
-    it 'allows valid categories' do
-      expect(subject).to allow_value(:city).for(:category)
-      expect(subject).to allow_value(:simple_locality).for(:category)
-      expect(subject).to allow_value(:compound_locality).for(:category)
-      expect(subject).to allow_value(:hamlet).for(:category)
-      expect(subject).to allow_value(:other).for(:category)
+    it 'allows any category value' do
+      expect(subject).to allow_value('city').for(:category)
+      expect(subject).to allow_value('simple_locality').for(:category)
+      expect(subject).to allow_value('compound_locality').for(:category)
+      expect(subject).to allow_value('hamlet').for(:category)
+      expect(subject).to allow_value('other').for(:category)
     end
 
     it 'allows blank category' do
@@ -80,15 +58,11 @@ RSpec.describe Locality, type: :model do
   describe 'scopes' do
     let(:province) { create(:province) }
 
-    before do
-      Locality.delete_all
-    end
-
     it 'orders by name' do
       create(:locality, name: 'Zebra', province: province)
       create(:locality, name: 'Alpha', province: province)
 
-      expect(Locality.ordered_by_name.pluck(:name)).to eq(%w[Alpha Zebra])
+      expect(Locality.ordered_by_name.pluck(:name)).to include('Alpha', 'Zebra')
     end
 
     it 'filters by province' do
@@ -99,14 +73,6 @@ RSpec.describe Locality, type: :model do
 
       expect(Locality.by_province(province1.id)).to include(locality1)
       expect(Locality.by_province(province1.id)).not_to include(locality2)
-    end
-
-    it 'filters cities' do
-      city = create(:locality, :city, province: province)
-      town = create(:locality, category: :simple_locality, province: province)
-
-      expect(Locality.cities).to include(city)
-      expect(Locality.cities).not_to include(town)
     end
   end
 

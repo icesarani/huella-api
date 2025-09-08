@@ -87,3 +87,128 @@ end
 puts "\n✅ Successfully seeded #{localities_data.length} localities for Buenos Aires province!"
 puts "📊 Total provinces: #{Province.count}"
 puts "📊 Total localities: #{Locality.count}"
+
+puts "\n🩺 Creating veterinarian with comprehensive schedule..."
+
+# Create blockchain wallet for the vet
+vet_blockchain_wallet = BlockchainWallet.find_or_create_by!(
+  address: '0x1234567890abcdef1234567890abcdef12345678'
+) do |wallet|
+  wallet.mnemonic_phrase = 'vet seed twelve words for blockchain wallet access and security purposes'
+  wallet.private_key = "0x#{SecureRandom.hex(32)}"
+end
+
+# Create user account for the veterinarian with vet profile
+vet_user = User.find_or_create_by!(email: 'vet@huellarural.com') do |user|
+  user.password = 'VetPassword123!'
+  user.password_confirmation = 'VetPassword123!'
+  user.build_vet_profile(
+    first_name: 'Dr. María Elena',
+    last_name: 'Rodríguez Veterinaria',
+    identity_card: '20345678901',
+    license_number: 'VET001234',
+    blockchain_wallet: vet_blockchain_wallet
+  )
+end
+
+# Get the vet profile (either newly created or existing)
+if vet_user.vet_profile
+  vet_profile = vet_user.vet_profile
+
+  puts "✅ Created veterinarian profile: #{vet_profile.first_name} #{vet_profile.last_name}"
+
+  # Define 3 fixed localities for this veterinarian
+  target_localities = [
+    'La Plata',      # Capital city - good for central location
+    'Tandil',        # Mid-sized city with rural surroundings
+    'Azul'           # Another rural/agricultural area
+  ]
+
+  puts '📍 Adding service areas for 3 localities...'
+
+  target_localities.each do |locality_name|
+    locality = Locality.find_by(name: locality_name)
+    if locality
+      VetServiceArea.find_or_create_by!(
+        vet_profile: vet_profile,
+        locality: locality
+      )
+      puts "  ✓ Added service area: #{locality_name}"
+    else
+      puts "  ⚠️  Locality '#{locality_name}' not found - skipping"
+    end
+  end
+
+  # Create comprehensive work schedule - available most of the time
+  work_schedule = VetWorkSchedule.find_or_create_by!(vet_profile: vet_profile) do |schedule|
+    schedule.monday = 'both'      # Full day Monday
+    schedule.tuesday = 'both'     # Full day Tuesday
+    schedule.wednesday = 'both'   # Full day Wednesday
+    schedule.thursday = 'morning' # Thursday mornings only
+    schedule.friday = 'both'      # Full day Friday
+    schedule.saturday = 'morning' # Saturday mornings only
+    schedule.sunday = 'none'      # Sundays off
+  end
+
+  puts '📅 Created work schedule:'
+  puts '  Monday: Full day (morning + afternoon)'
+  puts '  Tuesday: Full day (morning + afternoon)'
+  puts '  Wednesday: Full day (morning + afternoon)'
+  puts '  Thursday: Morning only'
+  puts '  Friday: Full day (morning + afternoon)'
+  puts '  Saturday: Morning only'
+  puts '  Sunday: Not available'
+
+  puts '✅ Veterinarian setup complete!'
+  puts '📧 Login email: vet@huellarural.com'
+  puts '🔑 Password: VetPassword123!'
+  puts "🏥 Service areas: #{target_localities.join(', ')}"
+  puts "⏰ Working days: #{work_schedule.working_days.count} days per week"
+else
+  puts 'ℹ️  Veterinarian profile already exists - skipping creation'
+end
+
+puts "\n🐄 Creating sample producer for testing..."
+
+# Create blockchain wallet for the producer
+producer_blockchain_wallet = BlockchainWallet.find_or_create_by!(
+  address: '0xabcdef1234567890abcdef1234567890abcdef12'
+) do |wallet|
+  wallet.mnemonic_phrase = 'producer farm cattle blockchain secure wallet test development environment setup'
+  wallet.private_key = "0x#{SecureRandom.hex(32)}"
+end
+
+# Create user account for the producer with producer profile
+producer_user = User.find_or_create_by!(email: 'producer@huellarural.com') do |user|
+  user.password = 'ProducerPass123!'
+  user.password_confirmation = 'ProducerPass123!'
+  user.build_producer_profile(
+    name: 'Estancia San Miguel',
+    cuig_number: 'CUIG123456789',
+    renspa_number: 'RENSPA987654',
+    identity_card: '20123456789',
+    blockchain_wallet: producer_blockchain_wallet
+  )
+end
+
+# Get the producer profile (either newly created or existing)
+if producer_user.producer_profile
+  producer_profile = producer_user.producer_profile
+
+  puts "✅ Created producer profile: #{producer_profile.name}"
+  puts '📧 Login email: producer@huellarural.com'
+  puts '🔑 Password: ProducerPass123!'
+  puts "🏭 CUIG: #{producer_profile.cuig_number}"
+  puts "🏭 RENSPA: #{producer_profile.renspa_number}"
+else
+  puts 'ℹ️  Producer profile already exists - skipping creation'
+end
+
+puts "\n🎯 Seed data summary:"
+puts "📊 Provinces: #{Province.count}"
+puts "📊 Localities: #{Locality.count}"
+puts "👨‍⚕️ Veterinarians: #{VetProfile.count}"
+puts "🧑‍🌾 Producers: #{ProducerProfile.count}"
+puts "📍 Vet service areas: #{VetServiceArea.count}"
+puts "⏰ Work schedules: #{VetWorkSchedule.count}"
+puts "\n✨ Seeding completed successfully!"

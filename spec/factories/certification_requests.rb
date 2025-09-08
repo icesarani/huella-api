@@ -7,9 +7,8 @@
 #  id                    :bigint           not null, primary key
 #  address               :string
 #  cattle_breed          :enum             not null
-#  declared_lot_age      :enum             not null
-#  declared_lot_health   :enum             not null
-#  declared_lot_weight   :enum             not null
+#  declared_lot_age      :integer          not null
+#  declared_lot_weight   :integer          not null
 #  intended_animal_group :integer
 #  preferred_time_range  :tstzrange        not null
 #  scheduled_date        :date
@@ -41,9 +40,8 @@ FactoryBot.define do # rubocop:disable Metrics/BlockLength
     vet_profile { nil }
     producer_profile
     intended_animal_group { 50 }
-    declared_lot_weight { CertificationRequest.declared_lot_weights.keys.sample }
-    declared_lot_age { CertificationRequest.declared_lot_ages.keys.sample }
-    declared_lot_health { CertificationRequest.declared_lot_healths.keys.sample }
+    declared_lot_weight { rand(300..800) }
+    declared_lot_age { rand(6..60) }
     cattle_breed { CertificationRequest.cattle_breeds.keys.sample }
     preferred_time_range { (Time.current..Time.current + 30.days) }
 

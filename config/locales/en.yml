@@ -29,3 +29,22 @@
 
 en:
   hello: "Hello world"
+  
+  errors:
+    not_found: "Resource not found"
+    internal_server_error: "Internal server error"
+    authorization:
+      producer_required: "Access restricted to producers only"
+      veterinarian_required: "Access restricted to veterinarians only"
+    
+    certification_request:
+      creation_failed: "Failed to create certification request"
+      file_processing_failed: "Failed to process uploaded file"
+      veterinarian_assignment_failed: "No available veterinarian found for the requested time and location"
+      
+  activerecord:
+    errors:
+      user:
+        attributes:
+          profiles:
+            invalid: "User must have exactly one profile (producer or veterinarian)"

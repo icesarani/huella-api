@@ -18,6 +18,8 @@ Rails.application.routes.draw do
 
         resource :registrations, only: %i[create]
       end
+
+      resources :certification_requests, only: [:create]
     end
   end
 

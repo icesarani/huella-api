@@ -25,8 +25,8 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :jwt_authenticatable, jwt_revocation_strategy: JwtAllowlist
 
-  has_one :producer_profile, inverse_of: :user
-  has_one :vet_profile, inverse_of: :user
+  has_one :producer_profile, inverse_of: :user, dependent: :destroy
+  has_one :vet_profile, inverse_of: :user, dependent: :destroy
   has_many :jwt_allowlists, dependent: :destroy
 
   accepts_nested_attributes_for :producer_profile

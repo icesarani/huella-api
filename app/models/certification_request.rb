@@ -7,9 +7,8 @@
 #  id                    :bigint           not null, primary key
 #  address               :string
 #  cattle_breed          :enum             not null
-#  declared_lot_age      :enum             not null
-#  declared_lot_health   :enum             not null
-#  declared_lot_weight   :enum             not null
+#  declared_lot_age      :integer          not null
+#  declared_lot_weight   :integer          not null
 #  intended_animal_group :integer
 #  preferred_time_range  :tstzrange        not null
 #  scheduled_date        :date
@@ -42,7 +41,10 @@ class CertificationRequest < ApplicationRecord
   accepts_nested_attributes_for :file_upload, allow_destroy: true, reject_if: :all_blank
 
   validates :address, :locality, :producer_profile, :preferred_time_range, :intended_animal_group,
-            :declared_lot_weight, :declared_lot_age, :declared_lot_health, :cattle_breed, presence: true
+            :declared_lot_weight, :declared_lot_age, :cattle_breed, presence: true
+
+  validates :declared_lot_weight, numericality: { greater_than: 0, less_than_or_equal_to: 2000 }
+  validates :declared_lot_age, numericality: { greater_than: 0, less_than_or_equal_to: 240 }
 
   enum :status, { created: 'created',
                   assigned: 'assigned',
@@ -51,10 +53,6 @@ class CertificationRequest < ApplicationRecord
                   rejected: 'rejected' }
 
   enum :scheduled_time, { morning: 'morning', afternoon: 'afternoon' }
-
-  enum :declared_lot_weight, { skinny: 'skinny', average: 'average', heavy: 'heavy' }, prefix: true
-  enum :declared_lot_age, { new_born: 'new_born', young: 'young', mature: 'mature', adult: 'adult' }, prefix: true
-  enum :declared_lot_health, { unhealthy: 'unhealthy', common: 'common', healthy: 'healthy' }, prefix: true
 
   enum :cattle_breed, { angus: 'angus',
                         hereford: 'hereford',

@@ -7,9 +7,8 @@
 #  id                    :bigint           not null, primary key
 #  address               :string
 #  cattle_breed          :enum             not null
-#  declared_lot_age      :enum             not null
-#  declared_lot_health   :enum             not null
-#  declared_lot_weight   :enum             not null
+#  declared_lot_age      :integer          not null
+#  declared_lot_weight   :integer          not null
 #  intended_animal_group :integer
 #  preferred_time_range  :tstzrange        not null
 #  scheduled_date        :date
@@ -51,8 +50,12 @@ RSpec.describe CertificationRequest, type: :model do
     it { is_expected.to validate_presence_of(:intended_animal_group) }
     it { is_expected.to validate_presence_of(:declared_lot_weight) }
     it { is_expected.to validate_presence_of(:declared_lot_age) }
-    it { is_expected.to validate_presence_of(:declared_lot_health) }
     it { is_expected.to validate_presence_of(:cattle_breed) }
+
+    it {
+      is_expected.to validate_numericality_of(:declared_lot_weight).is_greater_than(0).is_less_than_or_equal_to(2000)
+    }
+    it { is_expected.to validate_numericality_of(:declared_lot_age).is_greater_than(0).is_less_than_or_equal_to(240) }
   end
 
   describe 'enums' do
@@ -89,9 +92,8 @@ RSpec.describe CertificationRequest, type: :model do
         locality: create(:locality),
         producer_profile: create(:producer_profile),
         intended_animal_group: 50,
-        declared_lot_weight: 'average',
-        declared_lot_age: 'mature',
-        declared_lot_health: 'healthy',
+        declared_lot_weight: 450,
+        declared_lot_age: 24,
         cattle_breed: 'angus',
         preferred_time_range: (Time.current..Time.current + 30.days),
         file_upload_attributes: {

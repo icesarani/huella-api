@@ -48,6 +48,10 @@ Dir[Rails.root.join('spec/support/helpers/**/*.rb')].sort.each { |file| require 
 $api_docs = OpenapiContracts::Doc.parse(Rails.root.join('docs/api/v1'))
 
 RSpec.configure do |config|
+  # Force Spanish locale for consistent test translations
+  config.before(:each) do
+    I18n.locale = :es
+  end
   config.before(:each, type: :request) { host! 'localhost' }
 
   config.include FactoryBot::Syntax::Methods

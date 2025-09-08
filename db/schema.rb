@@ -10,16 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_07_042444) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_07_171844) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
   create_enum "cattle_breed", ["angus", "hereford", "brahman", "charolais", "limousin", "simmental", "holstein", "jersey", "shorthorn", "other"]
-  create_enum "certification_request_declared_lot_age", ["new_born", "young", "mature", "adult"]
-  create_enum "certification_request_declared_lot_health", ["unhealthy", "common", "healthy"]
-  create_enum "certification_request_declared_lot_weight", ["skinny", "average", "heavy"]
   create_enum "certification_status", ["created", "assigned", "executed", "canceled", "rejected"]
   create_enum "request_certification_scheduled_time", ["morning", "afternoon"]
   create_enum "work_schedule_time", ["none", "morning", "afternoon", "both"]
@@ -73,10 +70,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_07_042444) do
     t.datetime "updated_at", null: false
     t.enum "scheduled_time", enum_type: "request_certification_scheduled_time"
     t.tstzrange "preferred_time_range", null: false
-    t.enum "declared_lot_weight", null: false, enum_type: "certification_request_declared_lot_weight"
-    t.enum "declared_lot_age", null: false, enum_type: "certification_request_declared_lot_age"
-    t.enum "declared_lot_health", null: false, enum_type: "certification_request_declared_lot_health"
     t.enum "cattle_breed", null: false, enum_type: "cattle_breed"
+    t.integer "declared_lot_weight", null: false
+    t.integer "declared_lot_age", null: false
     t.index ["locality_id"], name: "index_certification_requests_on_locality_id"
     t.index ["producer_profile_id"], name: "index_certification_requests_on_producer_profile_id"
     t.index ["vet_profile_id"], name: "index_certification_requests_on_vet_profile_id"

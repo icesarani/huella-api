@@ -1,5 +1,21 @@
 
 es:
+  hello: "Hola mundo"
+  
+  errors:
+    not_found: "Recurso no encontrado"
+    internal_server_error: "Error interno del servidor"
+    oops_something_went_wrong: "Oops, algo salió mal"
+    authorization:
+      producer_required: "Acceso restringido solo a productores"
+      veterinarian_required: "Acceso restringido solo a veterinarios"
+    
+    certification_request:
+      creation_failed: "Error al crear la solicitud de certificación"
+      file_processing_failed: "Error al procesar el archivo cargado"
+      file_required: "debe incluir un archivo"
+      veterinarian_assignment_failed: "No se encontró veterinario disponible para la hora y ubicación solicitadas"
+
   activerecord:
     errors:
       messages:
@@ -24,8 +40,6 @@ es:
               invalid: "debe tener el formato AR-X donde X es una letra"
         locality:
           attributes:
-            indec_code:
-              wrong_length: "debe tener exactamente 11 dígitos"
             category:
               inclusion: "debe ser Ciudad, Localidad simple (LS), Localidad compuesta (LC), Paraje (P) u Otros"
         user:

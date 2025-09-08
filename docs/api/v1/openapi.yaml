@@ -14,6 +14,8 @@ security:
 tags:
   - name: Auth
     description: Endpoints for user authentication.
+  - name: Certification Requests
+    description: Endpoints for managing certification requests.
 paths:
   /api/v1/sessions:
     post:
@@ -113,6 +115,57 @@ paths:
                 $ref: '#/components/schemas/User'
         '422':
           description: Validation errors.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/certification_requests:
+    post:
+      summary: Creates a new certification request.
+      description: Creates a new certification request with required file upload and automatic veterinarian assignment.
+      operationId: createCertificationRequest
+      tags: [Certification Requests]
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: Certification request data with required file upload.
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                certification_request:
+                  $ref: '#/components/schemas/CertificationRequestInput'
+              required:
+                - certification_request
+      responses:
+        '201':
+          description: Successfully created certification request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CertificationRequestCreate'
+        '401':
+          description: Unauthorized - user not authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden - user is not a producer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation errors or veterinarian assignment failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error.
           content:
             application/json:
               schema:
@@ -349,12 +402,187 @@ components:
           type: integer
           description: Province identifier
           example: 1
+    CertificationRequestInput:
+      type: object
+      properties:
+        address:
+          type: string
+          description: Farm address
+          example: "Farm Address 123"
+        locality_id:
+          type: integer
+          description: Locality identifier
+          example: 1
+        intended_animal_group:
+          type: integer
+          description: Number of animals in the group
+          example: 50
+        declared_lot_weight:
+          type: integer
+          description: Declared weight of the lot in kg
+          minimum: 1
+          maximum: 2000
+          example: 450
+        declared_lot_age:
+          type: integer
+          description: Declared age of the lot in months
+          minimum: 1
+          maximum: 240
+          example: 24
+        cattle_breed:
+          type: string
+          enum: [angus, hereford, brahman, charolais, limousin, simmental, holstein, jersey, shorthorn, other]
+          description: Cattle breed
+          example: "angus"
+        preferred_time_range_start:
+          type: string
+          format: date-time
+          description: Preferred start time for certification
+          example: "2024-12-02T09:00:00-03:00"
+        preferred_time_range_end:
+          type: string
+          format: date-time
+          description: Preferred end time for certification
+          example: "2024-12-02T17:00:00-03:00"
+        file:
+          type: string
+          format: binary
+          description: Required image file (JPEG/PNG only)
+      required:
+        - address
+        - locality_id
+        - intended_animal_group
+        - declared_lot_weight
+        - declared_lot_age
+        - cattle_breed
+        - preferred_time_range_start
+        - preferred_time_range_end
+        - file
+    CertificationRequestCreate:
+      type: object
+      properties:
+        certification_request:
+          $ref: '#/components/schemas/CertificationRequest'
+    CertificationRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Certification request identifier
+          example: 1
+        address:
+          type: string
+          description: Farm address
+          example: "Farm Address 123"
+        intended_animal_group:
+          type: integer
+          description: Number of animals in the group
+          example: 50
+        declared_lot_weight:
+          type: integer
+          description: Declared weight in kg
+          example: 450
+        declared_lot_age:
+          type: integer
+          description: Declared age in months
+          example: 24
+        cattle_breed:
+          type: string
+          description: Cattle breed
+          example: "angus"
+        preferred_time_range:
+          type: string
+          description: Preferred time range for certification
+          example: "[2024-12-02 09:00:00 -0300,2024-12-02 17:00:00 -0300)"
+        scheduled_date:
+          oneOf:
+            - type: 'null'
+            - type: string
+          format: date
+          description: Scheduled date for certification
+          example: "2024-12-02"
+        scheduled_time:
+          oneOf:
+            - type: 'null'
+            - type: string
+              enum: [morning, afternoon]
+          description: Scheduled time slot
+          example: "morning"
+        status:
+          type: string
+          enum: [created, assigned, executed, canceled, rejected]
+          description: Request status
+          example: "assigned"
+        locality:
+          $ref: '#/components/schemas/Locality'
+        producer_profile:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            name:
+              type: string
+              example: "Farm Producer Ltd"
+            cuig_number:
+              type: string
+              example: "CUIG123456"
+        vet_profile:
+          oneOf:
+            - type: 'null'
+            - type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            first_name:
+              type: string
+              example: "Dr. Maria"
+            last_name:
+              type: string
+              example: "Garcia"
+            license_number:
+              type: string
+              example: "LIC123456"
+        file_upload:
+          oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/AiAnalyzedFileUpload'
+        created_at:
+          type: string
+          format: date-time
+          example: "2024-12-02T09:30:00-03:00"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2024-12-02T10:30:00-03:00"
     Error:
       type: object
       properties:
-        errors:
-          type: object
-          description: Validation errors
-          additionalProperties: true
-          example: 
-            profile_type: ["debes especificar si eres productor o veterinario"]
+        message:
+          type: string
+          description: Error message
+          example: "Validation failed"
+        code:
+          type: string
+          description: Error code
+          example: "unprocessable_entity"
+    AiAnalyzedFileUpload:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        ai_analyzed_age:
+          type: string
+          example: "2.3 years"
+        ai_analyzed_weight:
+          type: string
+          example: "485 kg"
+        ai_analyzed_breed:
+          type: string
+          example: "Angus"
+        processed_at:
+          type: string
+          format: date-time
+          example: "2024-12-02T10:30:00-03:00"

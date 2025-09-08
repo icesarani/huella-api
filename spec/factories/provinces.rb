@@ -18,9 +18,9 @@
 
 FactoryBot.define do
   factory :province do
-    sequence(:indec_code) { |n| n.to_s.rjust(2, '0') }
-    sequence(:name) { |n| "Provincia #{n}" }
-    sequence(:iso_code) { |n| "AR-#{('A'.ord + (n - 1) % 26).chr}" }
+    indec_code { rand(10..99).to_s }
+    name { "Provincia #{rand(1000..9999)}" }
+    iso_code { "AR-#{('A'.ord + rand(0..25)).chr}" }
 
     trait :buenos_aires do
       indec_code { '06' }
