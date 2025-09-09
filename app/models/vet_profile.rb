@@ -33,6 +33,7 @@ class VetProfile < ApplicationRecord
   has_many :vet_service_areas, dependent: :destroy
   has_many :localities, through: :vet_service_areas
   has_one :vet_work_schedule, dependent: :destroy, inverse_of: :vet_profile
+  has_many :certification_requests, inverse_of: :vet_profile
 
   accepts_nested_attributes_for :vet_service_areas, allow_destroy: true, reject_if: :all_blank
 

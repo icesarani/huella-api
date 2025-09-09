@@ -3,6 +3,129 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::CertificationRequests', type: :request do
+  describe 'GET /api/v1/certification_requests' do
+    let(:user) { create(:user_with_producer_profile) }
+    let(:vet_user) { create(:user_with_vet_profile) }
+    let!(:locality) { create(:locality) }
+
+    let!(:producer_request_created) do
+      create(:certification_request, :created, producer_profile: user.producer_profile, locality: locality)
+    end
+    let!(:producer_request_assigned) do
+      create(:certification_request, :assigned, producer_profile: user.producer_profile, locality: locality,
+                                                vet_profile: vet_user.vet_profile)
+    end
+    let!(:producer_request_executed) do
+      create(:certification_request, :executed, producer_profile: user.producer_profile, locality: locality,
+                                                vet_profile: vet_user.vet_profile)
+    end
+    let!(:other_producer_request) do
+      other_producer = create(:producer_profile)
+      create(:certification_request, :created, producer_profile: other_producer, locality: locality)
+    end
+    let!(:vet_request_assigned) do
+      other_producer = create(:producer_profile)
+      create(:certification_request, :assigned, producer_profile: other_producer, locality: locality,
+                                                vet_profile: vet_user.vet_profile)
+    end
+    let!(:past_scheduled_request) do
+      create(:certification_request, :assigned,
+             producer_profile: user.producer_profile,
+             locality: locality,
+             vet_profile: vet_user.vet_profile,
+             scheduled_date: 1.day.ago)
+    end
+
+    context 'when user is authenticated as producer' do
+      before do
+        sign_in user
+      end
+
+      it 'returns only open certification requests for the producer' do
+        get '/api/v1/certification_requests'
+
+        expect(response).to have_http_status(:ok)
+        response_data = response.parsed_body
+
+        # Should only include created and assigned requests, not executed or past scheduled
+        returned_ids = response_data.map { |cr| cr['certification_request']['id'] }
+        expect(returned_ids).to contain_exactly(producer_request_created.id, producer_request_assigned.id)
+        expect(returned_ids).not_to include(producer_request_executed.id)
+        expect(returned_ids).not_to include(other_producer_request.id)
+        expect(returned_ids).not_to include(past_scheduled_request.id)
+      end
+
+      it 'returns ok status and matches OpenAPI schema' do
+        get '/api/v1/certification_requests'
+
+        expect(response).to match_openapi_doc($api_docs, path: '/api/v1/certification_requests').with_http_status(200)
+      end
+
+      it 'returns certification requests with all expected attributes' do
+        get '/api/v1/certification_requests'
+
+        response_data = response.parsed_body
+        expect(response_data).to be_an(Array)
+
+        first_request = response_data.first['certification_request']
+        expect(first_request).to have_key('id')
+        expect(first_request).to have_key('address')
+        expect(first_request).to have_key('status')
+        expect(first_request).to have_key('locality')
+        expect(first_request).to have_key('producer_profile')
+      end
+    end
+
+    context 'when user is authenticated as veterinarian' do
+      before do
+        sign_in vet_user
+      end
+
+      it 'returns only open certification requests assigned to the veterinarian' do
+        get '/api/v1/certification_requests'
+
+        expect(response).to have_http_status(:ok)
+        response_data = response.parsed_body
+
+        # Should only include assigned requests for this vet, not past scheduled
+        returned_ids = response_data.map { |cr| cr['certification_request']['id'] }
+        expect(returned_ids).to contain_exactly(producer_request_assigned.id, vet_request_assigned.id)
+        expect(returned_ids).not_to include(producer_request_created.id)
+        expect(returned_ids).not_to include(producer_request_executed.id)
+        expect(returned_ids).not_to include(other_producer_request.id)
+        expect(returned_ids).not_to include(past_scheduled_request.id)
+      end
+
+      it 'returns ok status and matches OpenAPI schema' do
+        get '/api/v1/certification_requests'
+
+        expect(response).to match_openapi_doc($api_docs, path: '/api/v1/certification_requests').with_http_status(200)
+      end
+    end
+
+    context 'when user is not authenticated' do
+      it 'returns unauthorized status and matches OpenAPI schema' do
+        get '/api/v1/certification_requests'
+
+        expect(response).to match_openapi_doc($api_docs, path: '/api/v1/certification_requests').with_http_status(401)
+      end
+    end
+
+    context 'when no open certification requests exist' do
+      before do
+        CertificationRequest.update_all(status: 'executed')
+        sign_in user
+      end
+
+      it 'returns empty array and matches OpenAPI schema' do
+        get '/api/v1/certification_requests'
+
+        expect(response).to have_http_status(:ok)
+        expect(response.parsed_body).to eq([])
+        expect(response).to match_openapi_doc($api_docs, path: '/api/v1/certification_requests').with_http_status(200)
+      end
+    end
+  end
   describe 'POST /api/v1/certification_requests' do
     let(:user) { create(:user_with_producer_profile) }
     let(:locality) { create(:locality) }

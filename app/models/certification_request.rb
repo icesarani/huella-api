@@ -34,8 +34,8 @@
 #
 class CertificationRequest < ApplicationRecord
   belongs_to :locality
-  belongs_to :vet_profile, optional: true
-  belongs_to :producer_profile
+  belongs_to :vet_profile, optional: true, inverse_of: :certification_requests
+  belongs_to :producer_profile, inverse_of: :certification_requests
   has_one :file_upload, dependent: :destroy, inverse_of: :certification_request
   has_one :certified_lot, dependent: :destroy
 
@@ -65,4 +65,13 @@ class CertificationRequest < ApplicationRecord
                         jersey: 'jersey',
                         shorthorn: 'shorthorn',
                         other: 'other' }
+
+  # Scope to retrieve open certification requests (created or assigned) for a given profile
+  # @param profile [ProducerProfile, VetProfile] The profile to filter certification requests
+  # @return [ActiveRecord::Relation] ActiveRecord relation with the filtered certification requests
+  scope :open, lambda { |profile:|
+    profile.certification_requests
+           .where(status: %w[created assigned])
+           .and(where('scheduled_date IS NULL OR scheduled_date >= ?', Time.zone.today))
+  }
 end

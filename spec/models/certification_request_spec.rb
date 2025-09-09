@@ -125,4 +125,131 @@ RSpec.describe CertificationRequest, type: :model do
       expect(FileUpload.find_by(id: file_upload_id)).to be_nil
     end
   end
+
+  describe 'scopes' do
+    describe '.open' do
+      let(:producer_profile) { create(:producer_profile) }
+      let(:vet_profile) { create(:vet_profile) }
+      let(:locality) { create(:locality) }
+
+      let!(:created_request) do
+        create(:certification_request, :created, producer_profile: producer_profile, locality: locality)
+      end
+      let!(:assigned_request) do
+        create(:certification_request, :assigned, producer_profile: producer_profile, locality: locality,
+                                                  vet_profile: vet_profile)
+      end
+      let!(:executed_request) do
+        create(:certification_request, :executed, producer_profile: producer_profile, locality: locality,
+                                                  vet_profile: vet_profile)
+      end
+      let!(:canceled_request) do
+        create(:certification_request, :canceled, producer_profile: producer_profile, locality: locality)
+      end
+      let!(:rejected_request) do
+        create(:certification_request, :rejected, producer_profile: producer_profile, locality: locality)
+      end
+
+      context 'when filtering by producer profile' do
+        it 'returns only created and assigned requests for the producer' do
+          open_requests = described_class.open(profile: producer_profile)
+
+          expect(open_requests).to contain_exactly(created_request, assigned_request)
+          expect(open_requests).not_to include(executed_request)
+          expect(open_requests).not_to include(canceled_request)
+          expect(open_requests).not_to include(rejected_request)
+        end
+
+        it 'excludes requests from other producers' do
+          other_producer = create(:producer_profile)
+          other_request = create(:certification_request, :created, producer_profile: other_producer, locality: locality)
+
+          open_requests = described_class.open(profile: producer_profile)
+
+          expect(open_requests).not_to include(other_request)
+        end
+      end
+
+      context 'when filtering by vet profile' do
+        it 'returns only assigned requests for the veterinarian' do
+          open_requests = described_class.open(profile: vet_profile)
+
+          expect(open_requests).to contain_exactly(assigned_request)
+          expect(open_requests).not_to include(created_request)
+          expect(open_requests).not_to include(executed_request)
+        end
+
+        it 'excludes requests assigned to other veterinarians' do
+          other_vet = create(:vet_profile)
+          other_vet_request = create(:certification_request, :assigned, producer_profile: producer_profile,
+                                                                        locality: locality, vet_profile: other_vet)
+
+          open_requests = described_class.open(profile: vet_profile)
+
+          expect(open_requests).not_to include(other_vet_request)
+        end
+      end
+
+      context 'when dealing with scheduled dates' do
+        let!(:future_scheduled_request) do
+          create(:certification_request, :assigned,
+                 producer_profile: producer_profile,
+                 locality: locality,
+                 vet_profile: vet_profile,
+                 scheduled_date: 1.day.from_now)
+        end
+        let!(:today_scheduled_request) do
+          create(:certification_request, :assigned,
+                 producer_profile: producer_profile,
+                 locality: locality,
+                 vet_profile: vet_profile,
+                 scheduled_date: Time.zone.today)
+        end
+        let!(:past_scheduled_request) do
+          create(:certification_request, :assigned,
+                 producer_profile: producer_profile,
+                 locality: locality,
+                 vet_profile: vet_profile,
+                 scheduled_date: 1.day.ago)
+        end
+
+        it 'includes requests with null scheduled_date' do
+          open_requests = described_class.open(profile: producer_profile)
+
+          expect(open_requests).to include(created_request)
+          expect(open_requests).to include(assigned_request)
+        end
+
+        it 'includes requests scheduled for today or future' do
+          open_requests = described_class.open(profile: producer_profile)
+
+          expect(open_requests).to include(future_scheduled_request)
+          expect(open_requests).to include(today_scheduled_request)
+        end
+
+        it 'excludes requests scheduled in the past' do
+          open_requests = described_class.open(profile: producer_profile)
+
+          expect(open_requests).not_to include(past_scheduled_request)
+        end
+      end
+
+      context 'when profile has no certification requests' do
+        let(:empty_producer) { create(:producer_profile) }
+        let(:empty_vet) { create(:vet_profile) }
+
+        it 'returns empty relation for producer with no requests' do
+          open_requests = described_class.open(profile: empty_producer)
+
+          expect(open_requests).to be_empty
+        end
+
+        it 'returns empty relation for vet with no assigned requests' do
+          open_requests = described_class.open(profile: empty_vet)
+
+          expect(open_requests).to be_empty
+        end
+      end
+    end
+  end
 end

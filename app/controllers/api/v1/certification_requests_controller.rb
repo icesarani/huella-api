@@ -4,10 +4,18 @@ module Api
   module V1
     class CertificationRequestsController < BaseController
       # Devise authentication
-      before_action :authenticate_user!, only: %i[create certify]
+      before_action :authenticate_user!, only: %i[create certify index]
       before_action :ensure_producer!, only: [:create]
       before_action :ensure_veterinarian!, only: [:certify]
       before_action :find_certification_request!, only: [:certify]
+
+      def index
+        certification_requests = CertificationRequest.open(profile: current_user.profile)
+
+        render :index,
+               locals: { certification_requests: },
+               status: :ok, formats: :json
+      end
 
       # @route POST /api/v1/certification_requests (api_v1_certification_requests)
       def create

@@ -31,7 +31,7 @@
 class ProducerProfile < ApplicationRecord
   belongs_to :user, optional: false, inverse_of: :producer_profile
   belongs_to :blockchain_wallet, required: true, inverse_of: :producer_profile
-  has_many :certification_requests, dependent: :destroy
+  has_many :certification_requests, dependent: :destroy, inverse_of: :producer_profile
 
   validates :cuig_number, :renspa_number, :identity_card, :name, presence: true
   validates :cuig_number, uniqueness: true

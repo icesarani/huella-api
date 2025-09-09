@@ -130,6 +130,34 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
   /api/v1/certification_requests:
+    get:
+      summary: Retrieves open certification requests for the authenticated user.
+      description: Retrieves a list of open certification requests (created or assigned status) for the authenticated user's profile. Producers see requests they created, veterinarians see requests assigned to them.
+      operationId: listCertificationRequests
+      tags: [Certification Requests]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successfully retrieved list of open certification requests.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CertificationRequest'
+        '401':
+          description: Unauthorized - user not authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
       summary: Creates a new certification request.
       description: Creates a new certification request with required file upload and automatic veterinarian assignment.
