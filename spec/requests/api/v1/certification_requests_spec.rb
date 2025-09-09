@@ -487,28 +487,29 @@ RSpec.describe 'Api::V1::CertificationRequests', type: :request do
     end
 
     context 'when user is authenticated veterinarian assigned to request' do
-      it 'creates a certified lot' do
+      it 'creates a certified lot', if: ENV['RUN_SPEND_TOKENS'] == 'true' do
         expect do
           post "/api/v1/certification_requests/#{certification_request.id}/certify",
                params: valid_certify_params, as: :multipart
         end.to change(CertifiedLot, :count).by(1)
       end
 
-      it 'creates cattle certifications' do
+      it 'creates cattle certifications', if: ENV['RUN_SPEND_TOKENS'] == 'true' do
         expect do
           post "/api/v1/certification_requests/#{certification_request.id}/certify",
                params: valid_certify_params, as: :multipart
         end.to change(CattleCertification, :count).by(2)
       end
 
-      it 'returns created status' do
+      it 'returns created status', if: ENV['RUN_SPEND_TOKENS'] == 'true' do
         post "/api/v1/certification_requests/#{certification_request.id}/certify",
              params: valid_certify_params, as: :multipart
 
         expect(response).to have_http_status(:created)
       end
 
-      it 'returns certification request with certified lot and cattle certifications' do
+      it 'returns certification request with certified lot and cattle certifications',
+         if: ENV['RUN_SPEND_TOKENS'] == 'true' do
         post "/api/v1/certification_requests/#{certification_request.id}/certify",
              params: valid_certify_params, as: :multipart
 

@@ -3,10 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Blockchain::CertificationService, type: :service do
-  # Integration tests that call real blockchain - skipped by default
-  # To run: rspec spec/services/blockchain/certification_service_integration_spec.rb --tag blockchain_integration
-
-  describe 'Integration with real blockchain', :blockchain_integration do
+  describe 'Integration with real blockchain', if: ENV['BLOCKCHAIN_INTEGRATION'] == 'true' do
     let(:service) { described_class.new }
     let(:pdf_hash) { "0x#{SecureRandom.hex(32)}" }
     let(:owner_address) { "0x#{SecureRandom.hex(20)}" }
@@ -63,9 +60,7 @@ RSpec.describe Blockchain::CertificationService, type: :service do
 
     context 'when certifying document (requires tokens)' do
       # This test actually spends blockchain tokens - only run manually
-      it 'certifies document on blockchain', :spend_tokens do
-        skip 'Skipping token-spending test. Remove :spend_tokens tag to run.'
-
+      it 'certifies document on blockchain', if: ENV['RUN_SPEND_TOKENS'] == 'true' do
         result = service.certify_document(
           pdf_hash: pdf_hash,
           owner_address: owner_address,
@@ -104,14 +99,5 @@ RSpec.describe Blockchain::CertificationService, type: :service do
         end.to raise_error(ArgumentError, /Invalid Ethereum address/)
       end
     end
-  end
-
-  # Configuration for running integration tests
-  RSpec.configure do |config|
-    # Skip blockchain integration tests by default
-    config.filter_run_excluding :blockchain_integration
-
-    # Skip token-spending tests even when running integration tests
-    config.filter_run_excluding :spend_tokens
   end
 end
