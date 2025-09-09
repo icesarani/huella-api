@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_08_032229) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_08_082029) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -53,6 +53,22 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_08_032229) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "blockchain_transactions", force: :cascade do |t|
+    t.string "transaction_hash", null: false
+    t.bigint "block_number"
+    t.string "status", default: "pending", null: false
+    t.bigint "gas_used"
+    t.string "network", null: false
+    t.string "contract_address", null: false
+    t.text "error_message"
+    t.json "raw_response"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["network", "contract_address"], name: "index_blockchain_transactions_on_network_and_contract_address"
+    t.index ["status"], name: "index_blockchain_transactions_on_status"
+    t.index ["transaction_hash"], name: "index_blockchain_transactions_on_transaction_hash", unique: true
+  end
+
   create_table "blockchain_wallets", force: :cascade do |t|
     t.string "address"
     t.string "mnemonic_phrase"
@@ -81,6 +97,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_08_032229) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["certified_lot_id"], name: "index_cattle_certifications_on_certified_lot_id"
+  end
+
+  create_table "certification_documents", force: :cascade do |t|
+    t.bigint "cattle_certification_id", null: false
+    t.string "pdf_hash", null: false
+    t.bigint "blockchain_transaction_id", null: false
+    t.string "filename", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["blockchain_transaction_id"], name: "index_certification_documents_on_blockchain_transaction_id"
+    t.index ["cattle_certification_id"], name: "index_certification_documents_on_cattle_certification_id", unique: true
+    t.index ["pdf_hash"], name: "index_certification_documents_on_pdf_hash", unique: true
   end
 
   create_table "certification_requests", force: :cascade do |t|
@@ -221,6 +249,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_08_032229) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "cattle_certifications", "certified_lots"
+  add_foreign_key "certification_documents", "blockchain_transactions"
+  add_foreign_key "certification_documents", "cattle_certifications"
   add_foreign_key "certification_requests", "localities"
   add_foreign_key "certification_requests", "producer_profiles"
   add_foreign_key "certification_requests", "vet_profiles"

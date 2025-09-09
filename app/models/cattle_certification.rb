@@ -34,6 +34,7 @@
 class CattleCertification < ApplicationRecord
   has_one_attached :photo
   belongs_to :certified_lot, inverse_of: :cattle_certifications
+  has_one :certification_document, inverse_of: :cattle_certification, dependent: :destroy
 
   enum :category, {
     unweaned_calf: 'unweaned_calf',
@@ -69,6 +70,39 @@ class CattleCertification < ApplicationRecord
 
   validate :data_taken_at_cannot_be_future
   validate :pregnancy_service_range_cannot_be_future
+
+  # Delegate methods to certification_document
+  delegate :blockchain_certified?, :pdf_available?, :pdf_hash, :blockchain_transaction_hash,
+           :blockchain_status, :blockchain_url, :filename,
+           to: :certification_document, prefix: false, allow_nil: true
+
+  def blockchain_certified?
+    certification_document&.blockchain_certified? || false
+  end
+
+  def pdf_available?
+    certification_document&.pdf_file&.attached? || false
+  end
+
+  def blockchain_transaction_hash
+    certification_document&.blockchain_transaction_hash
+  end
+
+  def blockchain_status
+    certification_document&.blockchain_status || 'not_certified'
+  end
+
+  def pdf_hash
+    certification_document&.pdf_hash
+  end
+
+  def certification_filename
+    certification_document&.filename
+  end
+
+  def blockchain_url
+    certification_document&.blockchain_url
+  end
 
   private
 

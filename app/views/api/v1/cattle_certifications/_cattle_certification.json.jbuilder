@@ -25,3 +25,20 @@ if cattle_certification.photo.attached?
 else
   json.photo_url nil
 end
+
+# Blockchain certification information
+if cattle_certification.certification_document.present?
+  json.blockchain_certification do
+    json.pdf_hash cattle_certification.pdf_hash
+    json.transaction_hash cattle_certification.blockchain_transaction_hash
+    json.blockchain_status cattle_certification.blockchain_status
+    json.blockchain_url cattle_certification.blockchain_url
+    json.pdf_filename cattle_certification.certification_filename
+    json.pdf_available cattle_certification.pdf_available?
+    json.blockchain_certified cattle_certification.blockchain_certified?
+    json.certified_at cattle_certification.certification_document.created_at
+    json.network_name cattle_certification.certification_document.blockchain_transaction.network_name
+  end
+else
+  json.blockchain_certification nil
+end

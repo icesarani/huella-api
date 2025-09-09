@@ -30,7 +30,7 @@ module Api
           certifications_params: build_certifications_params
         ).call!
 
-        # Reload to include the newly created certified_lot and cattle_certifications
+        # Reload to include all created data (certified_lot, cattle_certifications, blockchain docs)
         @certification_request.reload
 
         render :certify,
@@ -48,12 +48,18 @@ module Api
 
       # Build certifications parameters from form-data
       # @return [Array<Hash>] Array of certification parameters
-      def build_certifications_params
+      def build_certifications_params # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
         certifications = []
         index = 0
 
         while params.dig(:certifications, index.to_s).present?
           cert_params = certification_params(index)
+          if cert_params[:pregnancy_service_range_start].present? && cert_params[:pregnancy_service_range_end].present?
+            cert_params[:pregnancy_service_range] =
+              (cert_params[:pregnancy_service_range_start]..cert_params[:pregnancy_service_range_end])
+          end
+          cert_params.delete(:pregnancy_service_range_start)
+          cert_params.delete(:pregnancy_service_range_end)
           certifications << cert_params if cert_params.present?
           index += 1
         end
@@ -75,7 +81,8 @@ module Api
           :estimated_weight,
           :pregnant,
           :pregnancy_diagnosis_method,
-          :pregnancy_service_range,
+          :pregnancy_service_range_start,
+          :pregnancy_service_range_end,
           :corporal_condition,
           :brucellosis_diagnosis,
           :comments,

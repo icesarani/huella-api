@@ -49,6 +49,23 @@ es:
     certification_request:
       creation_failed: "Error al crear la solicitud de certificación"
       file_processing_failed: "Error al procesar el archivo cargado"
+    
+    blockchain:
+      document_already_certified: "El documento con hash %{hash} ya está certificado"
+      unsupported_network: "Red no soportada: %{network}"
+      invalid_ethereum_address: "Dirección de Ethereum inválida: %{address}"
+      invalid_signature_format: "Formato de firma inválido: %{signature}"
+      invalid_wallet_format: "Wallet %{type} inválida: debe tener address y private_key"
+      invalid_wallet_address: "Dirección de wallet %{type} inválida: %{address}"
+      missing_private_key: "Falta clave privada para wallet %{type}"
+      missing_blockchain_wallets: "Faltan wallets blockchain del productor o veterinario"
+      wallet_creation_failed: "Error al crear wallet blockchain: %{error}"
+      
+    certification_document:
+      already_exists: "Ya existe un documento de certificación para la certificación de ganado %{id}"
+      pdf_generation_failed: "Error al generar PDF: %{error}"
+      signature_generation_failed: "Error al generar firmas: %{error}"
+      file_processing_failed: "Error al procesar el archivo cargado"
       file_required: "debe incluir un archivo"
       veterinarian_assignment_failed: "No se encontró veterinario disponible para la hora y ubicación solicitadas"
     

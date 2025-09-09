@@ -44,7 +44,16 @@ module CertifiedLots
       validate_certifications_count!
 
       ActiveRecord::Base.transaction do
-        create_certified_lot!
+        certified_lot = create_certified_lot!
+
+        # Generar certificaciones blockchain para cada cattle_certification
+        certified_lot.cattle_certifications.each do |cattle_certification|
+          CertificationDocuments::CreateService.new(
+            cattle_certification: cattle_certification
+          ).call!
+        end
+
+        certified_lot
       end
     end
 

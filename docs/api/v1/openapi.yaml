@@ -970,6 +970,11 @@ components:
           format: uri
           description: URL to the cattle photo
           example: "https://example.com/rails/active_storage/blobs/xyz123/cattle_photo.jpg"
+        blockchain_certification:
+          oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/BlockchainCertification'
+          description: Blockchain certification information (if available)
         created_at:
           type: string
           format: date-time
@@ -1101,3 +1106,46 @@ components:
           type: string
           format: date-time
           example: "2024-12-02T10:30:00-03:00"
+    BlockchainCertification:
+      type: object
+      description: Blockchain certification information
+      properties:
+        pdf_hash:
+          type: string
+          description: SHA256 hash of the PDF certificate
+          example: "0x1234567890abcdef..."
+        transaction_hash:
+          type: string
+          description: Blockchain transaction hash
+          example: "0xabcdef1234567890..."
+        blockchain_status:
+          type: string
+          enum: [pending, confirmed, failed, not_certified]
+          description: Status of the blockchain transaction
+          example: "confirmed"
+        blockchain_url:
+          type: string
+          format: uri
+          description: URL to view transaction on blockchain explorer
+          example: "https://amoy.polygonscan.com/tx/0xabcdef..."
+        pdf_filename:
+          type: string
+          description: Generated PDF filename
+          example: "cert_CUIG123_20240308_PROD456.pdf"
+        pdf_available:
+          type: boolean
+          description: Whether the PDF file is available for download
+          example: true
+        blockchain_certified:
+          type: boolean
+          description: Whether the document is confirmed on blockchain
+          example: true
+        certified_at:
+          type: string
+          format: date-time
+          description: When the blockchain certification was created
+          example: "2024-12-02T10:30:00-03:00"
+        network_name:
+          type: string
+          description: Blockchain network name
+          example: "Polygon Amoy Testnet"

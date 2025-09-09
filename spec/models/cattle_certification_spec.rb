@@ -136,13 +136,13 @@ RSpec.describe CattleCertification, type: :model do
     end
 
     it 'creates cattle_certification with photo attachment' do
-      cattle_certification.save!
-      expect(cattle_certification.photo).to be_attached
+      created_certification = create(:cattle_certification)
+      expect(created_certification.photo).to be_attached
     end
 
     it 'attaches photo with correct content type' do
-      cattle_certification.save!
-      expect(cattle_certification.photo.content_type).to eq('image/png')
+      created_certification = create(:cattle_certification)
+      expect(created_certification.photo.content_type).to eq('image/png')
     end
 
     describe 'traits' do

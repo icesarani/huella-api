@@ -187,7 +187,7 @@ RSpec.describe Utils::CattleCertificationPdfGenerator, type: :service do
         # Create a certification with minimal associations
         minimal_certification = build(:cattle_certification, certified_lot: nil)
 
-        expect { described_class.new(cattle_certification: minimal_certification).call }.to raise_error
+        expect { described_class.new(cattle_certification: minimal_certification).call }.to raise_error(NoMethodError)
       end
     end
 

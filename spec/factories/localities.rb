@@ -24,8 +24,8 @@
 
 FactoryBot.define do
   factory :locality do
-    indec_code { "06#{rand(100_000_000..999_999_999)}" }
-    name { "Localidad #{rand(1000..9999)}" }
+    sequence(:indec_code) { |n| "06#{(100_000_000 + n).to_s.ljust(9, '0')}" }
+    sequence(:name) { |n| "Localidad #{n}" }
     category { 'simple_locality' }
     association :province
 

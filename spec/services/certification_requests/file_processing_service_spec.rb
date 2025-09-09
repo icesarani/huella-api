@@ -136,7 +136,7 @@ RSpec.describe CertificationRequests::FileProcessingService, type: :service do
           uploaded_file: uploaded_file
         )
 
-        expect { service.call! }.to raise_error(StandardError, /Error al procesar el archivo cargado/i)
+        expect { service.call! }.to raise_error(StandardError, /Error al procesar el archivo cargado/)
       end
     end
   end

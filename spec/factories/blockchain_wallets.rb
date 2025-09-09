@@ -18,7 +18,7 @@
 
 FactoryBot.define do
   factory :blockchain_wallet do
-    sequence(:address) { |n| "0x#{n.to_s.rjust(40, '0')}" }
+    address { "0x#{SecureRandom.hex(20)}" }
     mnemonic_phrase { 'word1 word2 word3 word4 word5 word6 word7 word8 word9 word10 word11 word12' }
     private_key { "0x#{SecureRandom.hex(32)}" }
   end
