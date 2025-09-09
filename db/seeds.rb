@@ -103,8 +103,8 @@ vet_user = User.find_or_create_by!(email: 'vet@huellarural.com') do |user|
   user.password = 'VetPassword123!'
   user.password_confirmation = 'VetPassword123!'
   user.build_vet_profile(
-    first_name: 'Dr. María Elena',
-    last_name: 'Rodríguez Veterinaria',
+    first_name: 'María Elena',
+    last_name: 'Rodríguez',
     identity_card: '20345678901',
     license_number: 'VET001234',
     blockchain_wallet: vet_blockchain_wallet
@@ -359,6 +359,19 @@ if producer && veterinarian && localities.any?
       scheduled_date: Date.current + 20.days,
       scheduled_time: 'afternoon',
       preferred_time_range: (Time.current + 20.days..Time.current + 45.days)
+    },
+    {
+      address: 'Estancia San Miguel - Campo Alto, Zona Serrana Sector 7',
+      locality: localities.sample,
+      vet_profile: veterinarian,
+      status: 'assigned',
+      intended_animal_group: 1,
+      declared_lot_weight: 450,
+      declared_lot_age: 18,
+      cattle_breed: 'angus',
+      scheduled_date: Date.current,
+      scheduled_time: 'afternoon',
+      preferred_time_range: (Time.current - 20.days..Time.current + 45.days)
     }
   ]
 

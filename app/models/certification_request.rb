@@ -73,5 +73,6 @@ class CertificationRequest < ApplicationRecord
     profile.certification_requests
            .where(status: %w[created assigned])
            .and(where('scheduled_date IS NULL OR scheduled_date >= ?', Time.zone.today))
+           .order(Arel.sql('scheduled_date ASC NULLS LAST, created_at DESC'))
   }
 end
