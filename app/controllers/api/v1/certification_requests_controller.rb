@@ -80,6 +80,10 @@ module Api
           index += 1
         end
 
+        if certifications.empty?
+          raise ActionController::ParameterMissing, I18n.t('errors.certification.no_certifications_provided')
+        end
+
         certifications
       end
 

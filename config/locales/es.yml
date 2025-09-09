@@ -5,7 +5,7 @@ es:
   time:
     formats:
       long: "%d de %B de %Y a las %H:%M"
-  
+
   date:
     formats:
       long: "%d de %B de %Y"
@@ -37,7 +37,7 @@ es:
       - oct
       - nov
       - dic
-  
+
   errors:
     not_found: "Recurso no encontrado"
     internal_server_error: "Error interno del servidor"
@@ -45,11 +45,11 @@ es:
     authorization:
       producer_required: "Acceso restringido solo a productores"
       veterinarian_required: "Acceso restringido solo a veterinarios"
-    
+
     certification_request:
       creation_failed: "Error al crear la solicitud de certificación"
       file_processing_failed: "Error al procesar el archivo cargado"
-    
+
     blockchain:
       document_already_certified: "El documento con hash %{hash} ya está certificado"
       unsupported_network: "Red no soportada: %{network}"
@@ -60,7 +60,7 @@ es:
       missing_private_key: "Falta clave privada para wallet %{type}"
       missing_blockchain_wallets: "Faltan wallets blockchain del productor o veterinario"
       wallet_creation_failed: "Error al crear wallet blockchain: %{error}"
-      
+
     certification_document:
       already_exists: "Ya existe un documento de certificación para la certificación de ganado %{id}"
       pdf_generation_failed: "Error al generar PDF: %{error}"
@@ -68,13 +68,14 @@ es:
       file_processing_failed: "Error al procesar el archivo cargado"
       file_required: "debe incluir un archivo"
       veterinarian_assignment_failed: "No se encontró veterinario disponible para la hora y ubicación solicitadas"
-    
+
     certification:
       request_not_assigned: "La solicitud de certificación no está asignada a ningún veterinario"
       request_already_finalized: "La solicitud de certificación ya está finalizada y no puede ser certificada"
       veterinarian_not_assigned: "El veterinario no está asignado a esta solicitud de certificación"
       too_many_certifications: "Se proporcionaron demasiadas certificaciones (%{provided}), el máximo permitido es %{expected}"
       photo_required: "Se requiere foto para cada certificación de ganado"
+      no_certifications_provided: "No se proporcionaron certificaciones"
 
   activerecord:
     errors:
@@ -140,29 +141,29 @@ es:
       yes: "Si"
       no: "No"
       not_available: "No disponible"
-    
+
     cattle_certification:
       title: "Certificado de Ganado"
       subtitle: "Huella Rural - Sistema de Certificación Ganadera"
       generated_at: "Generado el: %{date}"
-      
+
       # Sections
       producer_info: "Información del Productor"
       veterinarian_info: "Información del Veterinario"
       animal_info: "Información del Animal"
-      
+
       # Producer fields
       producer_name: "Nombre del Productor"
       cuig_number: "Número CUIG"
       renspa_number: "Número RENSPA"
       farm_address: "Dirección del Establecimiento"
       locality: "Localidad"
-      
+
       # Veterinarian fields
       vet_name: "Nombre del Veterinario"
       license_number: "Número de Matrícula"
       certification_date: "Fecha de Certificación"
-      
+
       # Animal fields
       cuig_code: "Código CUIG"
       alternative_code: "Código Alternativo"
@@ -176,12 +177,12 @@ es:
       brucellosis_diagnosis: "Diagnóstico de Brucelosis"
       geolocation: "Coordenadas GPS"
       comments: "Comentarios"
-      
+
       # Formatting
       weight_format: "%{weight} kg"
       coordinates_format: "Lat: %{lat}, Lng: %{lng}"
       photo_unavailable: "Foto no disponible"
-      
+
       # Footer
       signature: "Huella Rural"
       signature_subtitle: "Sistema de Certificación Ganadera Digital"
@@ -193,12 +194,12 @@ es:
       gender:
         male: "Macho"
         female: "Hembra"
-      
+
       category:
         unweaned_calf: "Ternero no destetado"
         weaned_heifer: "Vaquillona destetada"
         weaned_steer: "Novillo destetado"
-      
+
       dental_chronology:
         milk_incisors_first_medians: "Incisivos de leche - Primeras medianas"
         milk_second_medians: "Incisivos de leche - Segundas medianas"
@@ -212,7 +213,7 @@ es:
         permanent_second_medians: "Segundas medianas permanentes"
         permanent_corners: "Esquinas permanentes"
         full_dentition: "Dentición completa"
-      
+
       pregnancy_diagnosis_method:
         palpation: "Palpación"
         ultrasound: "Ultrasonido"
