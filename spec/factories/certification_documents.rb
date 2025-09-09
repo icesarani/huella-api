@@ -1,5 +1,28 @@
 # frozen_string_literal: true
 
+# == Schema Information
+#
+# Table name: certification_documents
+#
+#  id                        :bigint           not null, primary key
+#  filename                  :string           not null
+#  pdf_hash                  :string           not null
+#  created_at                :datetime         not null
+#  updated_at                :datetime         not null
+#  blockchain_transaction_id :bigint           not null
+#  cattle_certification_id   :bigint           not null
+#
+# Indexes
+#
+#  index_certification_documents_on_blockchain_transaction_id  (blockchain_transaction_id)
+#  index_certification_documents_on_cattle_certification_id    (cattle_certification_id) UNIQUE
+#  index_certification_documents_on_pdf_hash                   (pdf_hash) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (blockchain_transaction_id => blockchain_transactions.id)
+#  fk_rails_...  (cattle_certification_id => cattle_certifications.id)
+#
 FactoryBot.define do # rubocop:disable Metrics/BlockLength
   factory :certification_document do
     cattle_certification

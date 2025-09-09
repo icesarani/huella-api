@@ -126,6 +126,159 @@ RSpec.describe 'Api::V1::CertificationRequests', type: :request do
       end
     end
   end
+
+  describe 'GET /api/v1/certification_requests/:id' do
+    let(:user) { create(:user_with_producer_profile) }
+    let(:vet_user) { create(:user_with_vet_profile) }
+    let!(:locality) { create(:locality) }
+
+    let!(:producer_request) do
+      create(:certification_request, :created, producer_profile: user.producer_profile, locality: locality)
+    end
+    let!(:vet_assigned_request) do
+      create(:certification_request, :assigned, producer_profile: user.producer_profile, locality: locality,
+                                                vet_profile: vet_user.vet_profile)
+    end
+    let!(:other_producer_request) do
+      other_producer = create(:producer_profile)
+      create(:certification_request, :created, producer_profile: other_producer, locality: locality)
+    end
+
+    context 'when user is authenticated as producer' do
+      before do
+        sign_in user
+      end
+
+      it 'returns the certification request when accessing own request' do
+        get "/api/v1/certification_requests/#{producer_request.id}"
+
+        expect(response).to have_http_status(:ok)
+        response_data = response.parsed_body
+
+        expect(response_data['certification_request']['id']).to eq(producer_request.id)
+        expect(response_data['certification_request']['producer_profile']['id']).to eq(user.producer_profile.id)
+      end
+
+      it 'returns ok status and matches OpenAPI schema for own request' do
+        get "/api/v1/certification_requests/#{producer_request.id}"
+
+        expect(response).to match_openapi_doc($api_docs,
+                                              path: '/api/v1/certification_requests/{id}').with_http_status(200)
+      end
+
+      it 'returns certification request with all expected attributes' do
+        get "/api/v1/certification_requests/#{producer_request.id}"
+
+        response_data = response.parsed_body
+        certification_request = response_data['certification_request']
+
+        expect(certification_request).to have_key('id')
+        expect(certification_request).to have_key('address')
+        expect(certification_request).to have_key('status')
+        expect(certification_request).to have_key('locality')
+        expect(certification_request).to have_key('producer_profile')
+        expect(certification_request).to have_key('vet_profile')
+        expect(certification_request).to have_key('created_at')
+        expect(certification_request).to have_key('updated_at')
+      end
+
+      it 'can access request assigned to a vet (own request)' do
+        get "/api/v1/certification_requests/#{vet_assigned_request.id}"
+
+        expect(response).to have_http_status(:ok)
+        response_data = response.parsed_body
+
+        expect(response_data['certification_request']['id']).to eq(vet_assigned_request.id)
+        expect(response_data['certification_request']['vet_profile']['id']).to eq(vet_user.vet_profile.id)
+      end
+    end
+
+    context 'when user is authenticated as veterinarian' do
+      before do
+        sign_in vet_user
+      end
+
+      it 'returns the certification request when accessing assigned request' do
+        get "/api/v1/certification_requests/#{vet_assigned_request.id}"
+
+        expect(response).to have_http_status(:ok)
+        response_data = response.parsed_body
+
+        expect(response_data['certification_request']['id']).to eq(vet_assigned_request.id)
+        expect(response_data['certification_request']['vet_profile']['id']).to eq(vet_user.vet_profile.id)
+      end
+
+      it 'returns ok status and matches OpenAPI schema for assigned request' do
+        get "/api/v1/certification_requests/#{vet_assigned_request.id}"
+
+        expect(response).to match_openapi_doc($api_docs,
+                                              path: '/api/v1/certification_requests/{id}').with_http_status(200)
+      end
+    end
+
+    context 'when user is not authenticated' do
+      it 'returns unauthorized status and matches OpenAPI schema' do
+        get "/api/v1/certification_requests/#{producer_request.id}"
+
+        expect(response).to match_openapi_doc($api_docs,
+                                              path: '/api/v1/certification_requests/{id}').with_http_status(401)
+      end
+    end
+
+    context 'when certification request does not exist' do
+      before do
+        sign_in user
+      end
+
+      it 'returns not found status and matches OpenAPI schema' do
+        get '/api/v1/certification_requests/99999'
+
+        expect(response).to match_openapi_doc($api_docs,
+                                              path: '/api/v1/certification_requests/{id}').with_http_status(404)
+      end
+    end
+
+    context 'when certification request exists but user has no access' do
+      before do
+        sign_in user
+      end
+
+      it 'can access other producer requests (no authorization restriction implemented)' do
+        get "/api/v1/certification_requests/#{other_producer_request.id}"
+
+        expect(response).to have_http_status(:ok)
+        response_data = response.parsed_body
+
+        expect(response_data['certification_request']['id']).to eq(other_producer_request.id)
+      end
+    end
+
+    context 'with certified lot and cattle certifications' do
+      let!(:executed_request) do
+        create(:certification_request, :executed, producer_profile: user.producer_profile, locality: locality,
+                                                  vet_profile: vet_user.vet_profile)
+      end
+      let!(:certified_lot) { create(:certified_lot, certification_request: executed_request) }
+      let!(:cattle_certification) { create(:cattle_certification, certified_lot: certified_lot) }
+
+      before do
+        sign_in user
+      end
+
+      it 'returns certification request with certified lot and cattle certifications' do
+        get "/api/v1/certification_requests/#{executed_request.id}"
+
+        expect(response).to have_http_status(:ok)
+        response_data = response.parsed_body
+
+        expect(response_data['certification_request']['certified_lot']).to be_present
+        expect(response_data['certification_request']['certified_lot']['id']).to eq(certified_lot.id)
+        expect(response_data['certification_request']['certified_lot']['cattle_certifications']).to be_an(Array)
+        expect(response_data['certification_request']['certified_lot']['cattle_certifications'].size).to eq(1)
+      end
+    end
+  end
+
   describe 'POST /api/v1/certification_requests' do
     let(:user) { create(:user_with_producer_profile) }
     let(:locality) { create(:locality) }

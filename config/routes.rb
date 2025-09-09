@@ -19,7 +19,7 @@ Rails.application.routes.draw do
         resource :registrations, only: %i[create]
       end
 
-      resources :certification_requests, only: %i[create index] do
+      resources :certification_requests, only: %i[create index show] do
         member do
           post :certify
         end

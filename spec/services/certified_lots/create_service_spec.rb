@@ -84,16 +84,21 @@ RSpec.describe CertifiedLots::CreateService, type: :service do
     context 'when certification request is not assigned' do
       let(:certification_request) { create(:certification_request, :created) }
 
-      it 'raise CertificationErrors::RequestNotAssignedError' do
-        expect { service.call }.to raise_error(CertificationErrors::RequestNotAssignedError)
+      it 'raises CertificationErrors::RequestNotAssignedError' do
+        expect do
+          service.call
+        end.to raise_error(CertificationErrors::RequestNotAssignedError) { |e| expect(e.message).to include('no está asignada a ningún veterinario') }
       end
     end
 
     context 'when certification request is already finalized' do
       let(:certification_request) { create(:certification_request, :executed) }
 
-      it 'raise CertificationErrors::RequestNotAssignedError' do
-        expect { service.call }.to raise_error(CertificationErrors::RequestNotAssignedError)
+      it 'raises CertificationErrors::RequestNotAssignedError' do
+        expect { service.call }.to raise_error(
+          CertificationErrors::RequestNotAssignedError,
+          /no está asignada a ningún veterinario/i
+        )
       end
     end
 
@@ -103,7 +108,8 @@ RSpec.describe CertifiedLots::CreateService, type: :service do
       let(:vet_user) { other_vet }
 
       it 'raise CertificationErrors::VeterinarianNotAssignedError' do
-        expect { service.call }.to raise_error(CertificationErrors::VeterinarianNotAssignedError)
+        expect { service.call }.to raise_error(CertificationErrors::VeterinarianNotAssignedError,
+                                               /no está asignado a esta solicitud de certificación/)
       end
     end
 
@@ -119,8 +125,11 @@ RSpec.describe CertifiedLots::CreateService, type: :service do
         ]
       end
 
-      it 'raise CertificationErrors::TooManyCertificationsError' do
-        expect { service.call }.to raise_error(CertificationErrors::TooManyCertificationsError)
+      it 'raises CertificationErrors::TooManyCertificationsError' do
+        expect { service.call }.to raise_error(
+          CertificationErrors::TooManyCertificationsError,
+          /demasiadas certificaciones/i
+        )
       end
     end
 
@@ -128,7 +137,8 @@ RSpec.describe CertifiedLots::CreateService, type: :service do
       let(:vet_user) { create(:user_with_producer_profile) }
 
       it 'raise CertificationErrors::VeterinarianNotAssignedError' do
-        expect { service.call }.to raise_error(CertificationErrors::VeterinarianNotAssignedError)
+        expect { service.call }.to raise_error(CertificationErrors::VeterinarianNotAssignedError,
+                                               /Acceso restringido solo a veterinarios/)
       end
     end
 

@@ -56,7 +56,7 @@ RSpec.describe CattleCertifications::CreateService, type: :service do
       end
 
       it 'raise CertificationErrors::PhotoRequiredError' do
-        expect { service.call }.to raise_error(CertificationErrors::PhotoRequiredError)
+        expect { service.call }.to raise_error(CertificationErrors::PhotoRequiredError, /Se requiere foto/)
       end
     end
   end

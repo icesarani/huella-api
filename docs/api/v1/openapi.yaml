@@ -257,6 +257,47 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /api/v1/certification_requests/{id}:
+    get:
+      summary: Retrieves a specific certification request.
+      description: Retrieves a specific certification request by ID. Users can only access certification requests they are associated with (producers can access their own requests, veterinarians can access requests assigned to them).
+      operationId: getCertificationRequest
+      tags: [Certification Requests]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The certification request ID
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Successfully retrieved certification request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CertificationRequestCreate'
+        '401':
+          description: Unauthorized - user not authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Certification request not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /api/v1/certification_requests/{id}/certify:
     post:
       summary: Certifies a certification request by creating a certified lot with cattle certifications.
