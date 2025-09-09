@@ -20,6 +20,8 @@ tags:
     description: Endpoints for managing users.
   - name: Localities
     description: Endpoints for managing localities.
+  - name: Certified Lots
+    description: Endpoints for managing certified lots.
 paths:
   /api/v1/sessions:
     post:
@@ -509,6 +511,27 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Locality'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/certified_lots:
+    get:
+      summary: Retrieves a list of all certified lots.
+      description: Retrieves a list of all certified lots with their associated certification requests and cattle certifications.
+      operationId: listCertifiedLots
+      tags: [Certified Lots]
+      responses:
+        '200':
+          description: Successfully retrieved list of certified lots.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CertifiedLot'
         '500':
           description: Internal server error.
           content:
@@ -1265,3 +1288,30 @@ components:
           type: string
           description: Blockchain network name
           example: "Polygon Amoy Testnet"
+    CertifiedLot:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The unique identifier of the certified lot
+          example: 1
+        created_at:
+          type: string
+          format: date-time
+          description: When the certified lot was created
+          example: "2024-12-02T10:30:00-03:00"
+        updated_at:
+          type: string
+          format: date-time
+          description: When the certified lot was last updated
+          example: "2024-12-02T10:30:00-03:00"
+        certification_request:
+          oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/CertificationRequest'
+          description: The associated certification request
+        cattle_certifications:
+          type: array
+          description: List of cattle certifications in this lot
+          items:
+            $ref: '#/components/schemas/CattleCertification'

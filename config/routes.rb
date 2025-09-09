@@ -25,6 +25,8 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :certified_lots, only: %i[index]
+
       resource :viewer, only: [:show]
 
       resources :localities, only: [:index]
