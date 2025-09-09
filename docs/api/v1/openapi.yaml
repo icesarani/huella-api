@@ -614,6 +614,11 @@ components:
           format: date-time
           description: Profile last update timestamp
           example: "2024-01-15T10:30:00Z"
+        work_schedule:
+          oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/VetWorkSchedule'
+          description: Veterinarian work schedule (if configured)
         localities:
           type: array
           description: Localities where the vet provides services
@@ -732,6 +737,48 @@ components:
           description: Work schedule for Sunday
           example: "none"
           default: "none"
+    VetWorkSchedule:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Work schedule identifier
+          example: 1
+        monday:
+          type: string
+          enum: [none, morning, afternoon, both]
+          description: Work schedule for Monday
+          example: "morning"
+        tuesday:
+          type: string
+          enum: [none, morning, afternoon, both]
+          description: Work schedule for Tuesday
+          example: "both"
+        wednesday:
+          type: string
+          enum: [none, morning, afternoon, both]
+          description: Work schedule for Wednesday
+          example: "afternoon"
+        thursday:
+          type: string
+          enum: [none, morning, afternoon, both]
+          description: Work schedule for Thursday
+          example: "none"
+        friday:
+          type: string
+          enum: [none, morning, afternoon, both]
+          description: Work schedule for Friday
+          example: "both"
+        saturday:
+          type: string
+          enum: [none, morning, afternoon, both]
+          description: Work schedule for Saturday
+          example: "morning"
+        sunday:
+          type: string
+          enum: [none, morning, afternoon, both]
+          description: Work schedule for Sunday
+          example: "none"
     Locality:
       type: object
       properties:
