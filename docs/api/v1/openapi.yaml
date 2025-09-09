@@ -56,25 +56,25 @@ paths:
               required:
                 - user
       responses:
-        '200':
+        "200":
           description: Successfully authenticated. The session token is sent as a cookie and JWT token in Authorization header.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        '401':
+                $ref: "#/components/schemas/User"
+        "401":
           description: Invalid email or password.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
     delete:
       summary: Deletes the current session.
       description: Deletes the current session for the user.
       operationId: deleteSession
       tags: [Auth]
       responses:
-        '204':
+        "204":
           description: Successfully deleted the session.
         "401":
           description: Invalid session.
@@ -110,27 +110,27 @@ paths:
                       description: The user's password.
                       example: securePassword123
                     producer_profile_attributes:
-                      $ref: '#/components/schemas/ProducerProfileAttributes'
+                      $ref: "#/components/schemas/ProducerProfileAttributes"
                     vet_profile_attributes:
-                      $ref: '#/components/schemas/VetProfileAttributes'
+                      $ref: "#/components/schemas/VetProfileAttributes"
                   required:
                     - email
                     - password
               required:
                 - user
       responses:
-        '200':
+        "200":
           description: Successfully created user account. JWT token included in Authorization header.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        '422':
+                $ref: "#/components/schemas/User"
+        "422":
           description: Validation errors.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /api/v1/certification_requests:
     get:
       summary: Retrieves open certification requests for the authenticated user.
@@ -140,26 +140,26 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: Successfully retrieved list of open certification requests.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CertificationRequest'
-        '401':
+                  $ref: "#/components/schemas/CertificationRequest"
+        "401":
           description: Unauthorized - user not authenticated.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '500':
+                $ref: "#/components/schemas/Error"
+        "500":
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
     post:
       summary: Creates a new certification request.
       description: Creates a new certification request with required file upload and automatic veterinarian assignment.
@@ -201,7 +201,19 @@ paths:
                   example: 24
                 "certification_request[cattle_breed]":
                   type: string
-                  enum: [angus, hereford, brahman, charolais, limousin, simmental, holstein, jersey, shorthorn, other]
+                  enum:
+                    [
+                      angus,
+                      hereford,
+                      brahman,
+                      charolais,
+                      limousin,
+                      simmental,
+                      holstein,
+                      jersey,
+                      shorthorn,
+                      other
+                    ]
                   description: Cattle breed
                   example: "angus"
                 "certification_request[preferred_time_range_start]":
@@ -229,36 +241,36 @@ paths:
                 - "certification_request[preferred_time_range_end]"
                 - "certification_request[file]"
       responses:
-        '201':
+        "201":
           description: Successfully created certification request.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CertificationRequestCreate'
-        '401':
+                $ref: "#/components/schemas/CertificationRequestCreate"
+        "401":
           description: Unauthorized - user not authenticated.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '403':
+                $ref: "#/components/schemas/Error"
+        "403":
           description: Forbidden - user is not a producer.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '422':
+                $ref: "#/components/schemas/Error"
+        "422":
           description: Validation errors or veterinarian assignment failed.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '500':
+                $ref: "#/components/schemas/Error"
+        "500":
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /api/v1/certification_requests/{id}:
     get:
       summary: Retrieves a specific certification request.
@@ -276,30 +288,30 @@ paths:
             type: integer
             example: 1
       responses:
-        '200':
+        "200":
           description: Successfully retrieved certification request.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CertificationRequestCreate'
-        '401':
+                $ref: "#/components/schemas/CertificationRequestCreate"
+        "401":
           description: Unauthorized - user not authenticated.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '404':
+                $ref: "#/components/schemas/Error"
+        "404":
           description: Certification request not found.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '500':
+                $ref: "#/components/schemas/Error"
+        "500":
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /api/v1/certification_requests/{id}/certify:
     post:
       summary: Certifies a certification request by creating a certified lot with cattle certifications.
@@ -344,7 +356,21 @@ paths:
                   example: "unweaned_calf"
                 "certifications[0][dental_chronology]":
                   type: string
-                  enum: [milk_incisors_first_medians, milk_second_medians, milk_corners, leveling_incisors, leveling_first_medians, leveling_second_medians, leveling_corners, permanent_incisors, permanent_first_medians, permanent_second_medians, permanent_corners, full_dentition]
+                  enum:
+                    [
+                      milk_incisors_first_medians,
+                      milk_second_medians,
+                      milk_corners,
+                      leveling_incisors,
+                      leveling_first_medians,
+                      leveling_second_medians,
+                      leveling_corners,
+                      permanent_incisors,
+                      permanent_first_medians,
+                      permanent_second_medians,
+                      permanent_corners,
+                      full_dentition
+                    ]
                   description: Dental chronology for first certification
                 "certifications[0][estimated_weight]":
                   type: integer
@@ -431,42 +457,42 @@ paths:
                   "certifications[1][data_taken_at]": "2024-12-01T11:00:00-03:00"
                   "certifications[1][photo]": "(binary file)"
       responses:
-        '201':
+        "201":
           description: Successfully certified the request and created certified lot.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CertificationRequestCreate'
-        '401':
+                $ref: "#/components/schemas/CertificationRequestCreate"
+        "401":
           description: Unauthorized - user not authenticated.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '403':
+                $ref: "#/components/schemas/Error"
+        "403":
           description: Forbidden - user is not a veterinarian.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '404':
+                $ref: "#/components/schemas/Error"
+        "404":
           description: Certification request not found.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '422':
+                $ref: "#/components/schemas/Error"
+        "422":
           description: Certification validation errors (request not assigned, too many certifications, etc.).
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '500':
+                $ref: "#/components/schemas/Error"
+        "500":
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /api/v1/viewer:
     get:
       summary: Retrieves the current authenticated user's information.
@@ -476,24 +502,24 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: Successfully retrieved user information.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        '401':
+                $ref: "#/components/schemas/User"
+        "401":
           description: Unauthorized - user not authenticated.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '500':
+                $ref: "#/components/schemas/Error"
+        "500":
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /api/v1/localities:
     get:
       summary: Retrieves a list of all localities.
@@ -503,20 +529,20 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: Successfully retrieved list of localities.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Locality'
-        '500':
+                  $ref: "#/components/schemas/Locality"
+        "500":
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /api/v1/certified_lots:
     get:
       summary: Retrieves a list of all certified lots.
@@ -524,20 +550,20 @@ paths:
       operationId: listCertifiedLots
       tags: [Certified Lots]
       responses:
-        '200':
+        "200":
           description: Successfully retrieved list of certified lots.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CertifiedLot'
-        '500':
+                  $ref: "#/components/schemas/CertifiedLotIndex"
+        "500":
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
 components:
   securitySchemes:
     cookieAuth:
@@ -562,10 +588,10 @@ components:
           description: The user's email address.
           example: "icesarani@uade.edu.ar"
         producer_profile:
-          $ref: '#/components/schemas/ProducerProfile'
+          $ref: "#/components/schemas/ProducerProfile"
           description: Producer profile information (if user is a producer)
         vet_profile:
-          $ref: '#/components/schemas/VetProfile'
+          $ref: "#/components/schemas/VetProfile"
           description: Vet profile information (if user is a vet)
     ProducerProfile:
       type: object
@@ -639,14 +665,14 @@ components:
           example: "2024-01-15T10:30:00Z"
         work_schedule:
           oneOf:
-            - type: 'null'
-            - $ref: '#/components/schemas/VetWorkSchedule'
+            - type: "null"
+            - $ref: "#/components/schemas/VetWorkSchedule"
           description: Veterinarian work schedule (if configured)
         localities:
           type: array
           description: Localities where the vet provides services
           items:
-            $ref: '#/components/schemas/Locality'
+            $ref: "#/components/schemas/Locality"
     ProducerProfileAttributes:
       type: object
       properties:
@@ -694,12 +720,12 @@ components:
           type: array
           description: Optional array of service areas for the veterinarian
           items:
-            $ref: '#/components/schemas/VetServiceAreaAttributes'
+            $ref: "#/components/schemas/VetServiceAreaAttributes"
           example:
             - locality_id: 1
             - locality_id: 2
         vet_work_schedule_attributes:
-          $ref: '#/components/schemas/VetWorkScheduleAttributes'
+          $ref: "#/components/schemas/VetWorkScheduleAttributes"
           description: Optional work schedule for the veterinarian
       required:
         - first_name
@@ -846,7 +872,19 @@ components:
           example: 24
         cattle_breed:
           type: string
-          enum: [angus, hereford, brahman, charolais, limousin, simmental, holstein, jersey, shorthorn, other]
+          enum:
+            [
+              angus,
+              hereford,
+              brahman,
+              charolais,
+              limousin,
+              simmental,
+              holstein,
+              jersey,
+              shorthorn,
+              other
+            ]
           description: Cattle breed
           example: "angus"
         preferred_time_range_start:
@@ -877,7 +915,7 @@ components:
       type: object
       properties:
         certification_request:
-          $ref: '#/components/schemas/CertificationRequest'
+          $ref: "#/components/schemas/CertificationRequest"
     CertificationRequest:
       type: object
       properties:
@@ -911,14 +949,14 @@ components:
           example: "[2024-12-02 09:00:00 -0300,2024-12-02 17:00:00 -0300)"
         scheduled_date:
           oneOf:
-            - type: 'null'
+            - type: "null"
             - type: string
           format: date
           description: Scheduled date for certification
           example: "2024-12-02"
         scheduled_time:
           oneOf:
-            - type: 'null'
+            - type: "null"
             - type: string
               enum: [morning, afternoon]
           description: Scheduled time slot
@@ -929,7 +967,7 @@ components:
           description: Request status
           example: "assigned"
         locality:
-          $ref: '#/components/schemas/Locality'
+          $ref: "#/components/schemas/Locality"
         producer_profile:
           type: object
           properties:
@@ -944,7 +982,7 @@ components:
               example: "CUIG123456"
         vet_profile:
           oneOf:
-            - type: 'null'
+            - type: "null"
             - type: object
           properties:
             id:
@@ -961,12 +999,12 @@ components:
               example: "LIC123456"
         file_upload:
           oneOf:
-            - type: 'null'
-            - $ref: '#/components/schemas/AiAnalyzedFileUpload'
+            - type: "null"
+            - $ref: "#/components/schemas/AiAnalyzedFileUpload"
         certified_lot:
           oneOf:
-            - type: 'null'
-            - $ref: '#/components/schemas/CertifiedLot'
+            - type: "null"
+            - $ref: "#/components/schemas/CertifiedLot"
           description: Certified lot information (if request has been certified)
         created_at:
           type: string
@@ -980,8 +1018,8 @@ components:
       type: object
       properties:
         certified_lot:
-          $ref: '#/components/schemas/CertifiedLot'
-    CertifiedLot:
+          $ref: "#/components/schemas/CertifiedLot"
+    CertifiedLotIndex:
       type: object
       properties:
         id:
@@ -1023,11 +1061,15 @@ components:
             status:
               type: string
               example: "assigned"
+            file_upload:
+              oneOf:
+                - type: "null"
+                - $ref: "#/components/schemas/AiAnalyzedFileUpload"
         cattle_certifications:
           type: array
           description: Array of cattle certifications in this lot
           items:
-            $ref: '#/components/schemas/CattleCertification'
+            $ref: "#/components/schemas/CattleCertification"
     CattleCertification:
       type: object
       properties:
@@ -1055,7 +1097,21 @@ components:
           example: "unweaned_calf"
         dental_chronology:
           type: string
-          enum: [milk_incisors_first_medians, milk_second_medians, milk_corners, leveling_incisors, leveling_first_medians, leveling_second_medians, leveling_corners, permanent_incisors, permanent_first_medians, permanent_second_medians, permanent_corners, full_dentition]
+          enum:
+            [
+              milk_incisors_first_medians,
+              milk_second_medians,
+              milk_corners,
+              leveling_incisors,
+              leveling_first_medians,
+              leveling_second_medians,
+              leveling_corners,
+              permanent_incisors,
+              permanent_first_medians,
+              permanent_second_medians,
+              permanent_corners,
+              full_dentition
+            ]
           description: Dental chronology
           example: "milk_incisors_first_medians"
         estimated_weight:
@@ -1111,8 +1167,8 @@ components:
           example: "https://example.com/rails/active_storage/blobs/xyz123/cattle_photo.jpg"
         blockchain_certification:
           oneOf:
-            - type: 'null'
-            - $ref: '#/components/schemas/BlockchainCertification'
+            - type: "null"
+            - $ref: "#/components/schemas/BlockchainCertification"
           description: Blockchain certification information (if available)
         created_at:
           type: string
@@ -1148,7 +1204,21 @@ components:
           example: "unweaned_calf"
         dental_chronology:
           type: string
-          enum: [milk_incisors_first_medians, milk_second_medians, milk_corners, leveling_incisors, leveling_first_medians, leveling_second_medians, leveling_corners, permanent_incisors, permanent_first_medians, permanent_second_medians, permanent_corners, full_dentition]
+          enum:
+            [
+              milk_incisors_first_medians,
+              milk_second_medians,
+              milk_corners,
+              leveling_incisors,
+              leveling_first_medians,
+              leveling_second_medians,
+              leveling_corners,
+              permanent_incisors,
+              permanent_first_medians,
+              permanent_second_medians,
+              permanent_corners,
+              full_dentition
+            ]
           description: Dental chronology of the cattle
           example: "milk_incisors_first_medians"
         estimated_weight:
@@ -1241,6 +1311,10 @@ components:
         ai_analyzed_breed:
           type: string
           example: "Angus"
+        photo_url:
+          type: string
+          format: uri
+          example: "https://example.com/rails/active_storage/blobs/xyz123/lot_photo.jpg"
         processed_at:
           type: string
           format: date-time
@@ -1307,11 +1381,11 @@ components:
           example: "2024-12-02T10:30:00-03:00"
         certification_request:
           oneOf:
-            - type: 'null'
-            - $ref: '#/components/schemas/CertificationRequest'
+            - type: "null"
+            - $ref: "#/components/schemas/CertificationRequest"
           description: The associated certification request
         cattle_certifications:
           type: array
           description: List of cattle certifications in this lot
           items:
-            $ref: '#/components/schemas/CattleCertification'
+            $ref: "#/components/schemas/CattleCertification"
